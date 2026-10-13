@@ -1,0 +1,31 @@
+# Resultados de compilação e IDE
+bin/
+obj/
+.vs/
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+*.user
+*.suo
+publish/
+TestResults/
+*.trx
+coverage*
+
+# Logs
+logs/
+*.log
+
+# Segredos e configuração local com credenciais
+appsettings.*.json
+!appsettings.Example.json
+*.secrets.json
+*.pfx
+*.key
+.env
+
+# Documentação de origem com segredos (o PDF da API contém o token)
+anexos/
+
+# Claude Code (configuração local)
+.claude/settings.local.json
