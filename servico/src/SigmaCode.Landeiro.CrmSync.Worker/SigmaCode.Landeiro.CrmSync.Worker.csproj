@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-SigmaCode.Landeiro.CrmSync.Worker-81753e10-a1ba-4b8c-887f-6cb46a983035</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SigmaCode.Landeiro.CrmSync.Infrastructure\SigmaCode.Landeiro.CrmSync.Infrastructure.csproj" />
+    <ProjectReference Include="..\SigmaCode.Landeiro.CrmSync.Core\SigmaCode.Landeiro.CrmSync.Core.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,27 @@
+# Estilo de código comum (C# e SQL)
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+csharp_new_line_before_open_brace = all
+
+[*.{csproj,props,targets,json,yml,yaml}]
+indent_style = space
+indent_size = 2
+
+[*.sql]
+indent_style = space
+indent_size = 4
+# Nomes SQL em minúsculas nas colunas PHC, palavras-chave em maiúsculas
+keyword_case = upper
+
+[*.{md,ps1}]
+indent_style = space
+indent_size = 4

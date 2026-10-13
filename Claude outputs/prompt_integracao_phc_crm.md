@@ -73,7 +73,8 @@ Vais fazer esta task do princípio ao fim, com o melhor desenho possível, docum
 
     ###Mapeamento PHC → API
     Contas: POST ImportAccounts (lista "accounts"). Origem: CL + CL2.
-        code            ← cl.no, como texto sem casas decimais (ex.: "13444"). Só fichas com cl.estab = 0.
+        code            ← cl.no + '-' + cl.estab, como texto sem casas decimais (ex.: sede "13444-0", estabelecimento "13444-1").
+                   Todas as fichas da CL são enviadas, cada estabelecimento é uma conta própria no CRM.
         name            ← cl.nome
         address         ← cl.morada
         postalCode      ← cl.codpost
@@ -89,7 +90,7 @@ Vais fazer esta task do princípio ao fim, com o melhor desenho possível, docum
             (para não apagar no CRM valores que lá existam). Se a API os exigir, envia-os vazios e regista-o na documentação.
 
     Contactos: POST ImportContacts (lista "contacts"). Origem: U_CLCONTACT.
-        accountCode     ← cl.no do cliente do contacto (join por clstamp), igual ao "code" da conta
+        accountCode     ← cl.no + '-' + cl.estab da ficha a que o contacto pertence (join por clstamp), igual ao "code" da conta
         contactCode     ← u_clcontactstamp (trim). É único e nunca muda (é a chave do upsert no CRM)
         name            ← u_clcontact.nome
         title           ← u_clcontact.funcao
@@ -100,7 +101,8 @@ Vais fazer esta task do princípio ao fim, com o melhor desenho possível, docum
         email           ← u_clcontact.email
         department      ← u_clcontact.departamento
         Não enviados (a API não tem campo): contacto, fax, estab, no.
-        Contactos com estab > 0 ficam ligados à conta da sede (accountCode = cl.no).
+        O contacto fica ligado à conta da ficha (sede ou estabelecimento) indicada pelo seu clstamp.
+        Confirma que u_clcontact.estab coincide com o cl.estab dessa ficha. Se houver casos diferentes, PARA e pergunta.
 
     Regras gerais:
         - Todos os campos de texto levam trim.
@@ -145,7 +147,7 @@ Vais fazer esta task do princípio ao fim, com o melhor desenho possível, docum
             - entidade: 'CONTA' ou 'CONTACTO'.
             - tipo de conta: 'CLI' / 'FOR' / 'COL'.
             - stamp do registo de origem (para CL2, o stamp do cliente: cl2stamp = clstamp).
-            - código (cl.no / contactCode), gravado no momento do insert, para continuar disponível depois de uma eliminação.
+            - código ("NO-ESTAB" da conta / contactCode), gravado no momento do insert, para continuar disponível depois de uma eliminação.
             - operação: 'U' (criação/alteração → upsert) ou 'D' (eliminação).
             - estado: 'PENDENTE' / 'A_PROCESSAR' / 'ENVIADO' / 'ERRO' / 'SEM_ENVIO'.
             - número de tentativas (informativo), última mensagem de erro, id devolvido pelo CRM, ação devolvida pelo CRM,
@@ -166,7 +168,7 @@ Vais fazer esta task do princípio ao fim, com o melhor desenho possível, docum
           compara inserted com deleted e só regista na fila se mudou algum campo integrado.
         - O trigger da CL2 regista a entidade CONTA (stamp = cl2stamp = clstamp) com origem 'CL2'. A deduplicação evita
           o envio a dobrar quando o PHC grava a CL e a CL2 na mesma operação.
-        - CL só com estab = 0. As alterações em estabelecimentos (estab > 0) não geram contas.
+        - CL: todas as fichas (sede e estabelecimentos) geram conta, com code "NO-ESTAB".
         - Tratam várias linhas de uma vez (inserted/deleted como conjuntos, nunca variáveis escalares).
         - Leves: só escrevem na fila, sem chamadas externas nem lógica pesada. SET NOCOUNT ON.
         - Não podem impedir a gravação da ficha no PHC em casos normais. Testa a gravação pelo próprio PHC, não só por SQL.
@@ -202,10 +204,11 @@ Vais fazer esta task do princípio ao fim, com o melhor desenho possível, docum
         - Qualquer dependência NuGet tem de ser justificada.
 
     ###Carga de dados existentes
-        - A Orcinus já fez uma importação inicial de clientes com o "Código PHC". Como o code = cl.no e a API faz upsert, um reenvio atualiza esses registos, não os duplica.
+        - A Orcinus já fez uma importação inicial de clientes com o "Código PHC". ATENÇÃO: se essa importação usou só o número (ex.: "13444") e nós enviamos "13444-0", o CRM cria uma conta NOVA (duplicado).
+          Não faças a importação completa sem a Orcinus confirmar o formato do código usado na importação inicial (pendência 8).
         - Os clientes que já existem não são enviados automaticamente na instalação.
         - Procedimento de carga com dois parâmetros: origem (por agora 'CL') e número (opcional):
-            - com um número, coloca na fila só esse cliente e os seus contactos (testes 1 a 1, a começar pelo 13444);
+            - com um número, coloca na fila esse cliente (sede e todos os estabelecimentos) e os seus contactos (testes 1 a 1, a começar pelo 13444);
             - sem número, coloca todos os clientes e contactos (importação completa, mais tarde).
         - Respeita a deduplicação e a ordem conta → contactos.
 
@@ -276,7 +279,13 @@ Decisões já tomadas (não voltar a perguntar):
 - Retenção: só os ficheiros de log são apagados ao fim de N dias (por defeito 7). A fila guarda tudo.
 - Erros: reprocessamento só manual.
 - Intervalo de execução: configurável, por defeito 5 minutos.
-- code = cl.no (só estab = 0). contactCode = u_clcontactstamp. accountType = fixo pela origem.
+- Base de testes: LAND2_DEMO, usada exclusivamente para testes (triggers, tabelas, views, procedimentos, testes SQL e de integração).
+  A LAND2 (base real) só é escrita depois da validação da arquitetura e de confirmação explícita por escrito.
+- Formato dos stamps: não assumir NEWID(). Antes de gerar stamps, ler na LAND2_DEMO os valores existentes de clstamp,
+  u_clcontactstamp e cl2stamp (comprimento, DATALENGTH, caracteres usados, prefixo) e a COLUMN_DEFAULT, e replicar esse formato.
+- Password do utilizador sa: fica como está por agora, no serviço. Antes do arranque em produção é trocada e o serviço passa
+  a usar um utilizador SQL com permissões mínimas, com a password em DPAPI.
+- code da conta = "NO-ESTAB" (ex.: "13444-0"), para sede e estabelecimentos. contactCode = u_clcontactstamp. accountType = fixo pela origem.
 - Campos de saldo, vencimento e observações das contas ficam fora do âmbito nesta fase.
 </decisions>
 
@@ -290,6 +299,8 @@ Questões a confirmar com a Orcinus. Não bloqueiam o desenvolvimento: implement
 5. Formato da resposta 206 para os registos que falham (como vêm identificados e com que mensagem).
 6. Existe ambiente de testes? Os registos de teste ficam no CRM de produção.
 7. Disponibilização em HTTPS (atualmente o token circula em HTTP na rede interna).
+8. Formato do "Código PHC" usado na importação inicial das contas. A integração usa "NÚMERO-ESTABELECIMENTO" (ex.: "13444-0").
+   Se a importação inicial usou só o número, é preciso converter os códigos no CRM antes da importação completa, para não haver duplicados.
 
 Email para a Orcinus:
     Escreve o email a enviar à Orcinus com estas questões e grava-o em docs/email-orcinus.md. NÃO o envias: eu reviso e envio.
@@ -314,7 +325,7 @@ Email para a Orcinus:
 
 <steps>
 1. Analisar os anexos e confirmar na base de dados os nomes das tabelas e campos, incluindo:
-   - se existem clientes com estab > 0 e como estão ligados os seus contactos;
+   - quantos clientes têm estabelecimentos (estab > 0) e se u_clcontact.estab coincide com o cl.estab da ficha ligada por clstamp;
    - a diferença entre u_clcontact.nome e u_clcontact.contacto (confirmar qual é o nome da pessoa, olhando para dados reais);
    - os triggers que já existem em CL, CL2 e U_CLCONTACT (não os quebrar).
    Apresentar o mapeamento final PHC → API.
@@ -337,7 +348,7 @@ Email para a Orcinus:
 Testes são obrigatórios em tudo, agora e em qualquer alteração futura. Nenhuma entrega sem os testes correspondentes e o resultado da execução.
 - SQL (scripts com asserts, executáveis em base de dados de teste e com rollback no fim):
   trigger em insert/update/delete; update sem alterações nos campos integrados não gera fila; alteração de saldo não gera fila;
-  várias linhas de uma vez; deduplicação; CL2 gera CONTA; estab > 0 não gera conta; views com o formato da API; carga 1 a 1 e total; reposição.
+  várias linhas de uma vez; deduplicação; CL2 gera CONTA; estabelecimento gera conta com code "NO-ESTAB" e os seus contactos ligam-se a ela; views com o formato da API; carga 1 a 1 e total; reposição.
 - .NET unitários (xUnit, ou o framework que já exista): mapeamento view → JSON, truncagem, interpretação das respostas 200/206/422,
   ordem conta → contacto, recuperação de A_PROCESSAR, operação 'D' → SEM_ENVIO, limpeza de logs.
 - .NET integração: API simulada (HttpMessageHandler falso) com 200, 206, 422, timeout e 401, e base de dados de teste.
@@ -345,6 +356,18 @@ Testes são obrigatórios em tudo, agora e em qualquer alteração futura. Nenhu
 </tests>
 
 <constraints>
+- Antes de entregar qualquer documento, confirma que não contradiz a secção <decisions>
+  (ex.: código NO-ESTAB para sede e estabelecimentos). Se um documento já existente contradisser, corrige-o e diz o que mudou.
+- A validação da arquitetura bloqueia só a fila, as views, os triggers e o serviço. A estrutura de pastas, o git init,
+  o .gitignore, o .editorconfig e a solução .NET vazia podem avançar já.
+- TRIGGERS EXISTENTES: não alteres, desatives, reordenes nem apagues triggers que já existam na base (ex.: tr_cl_update, tr_cl_delete).
+  Só crias os novos, com o prefixo tr_crm_ (ex.: tr_crm_cl_ins_upd_del). Antes de criar, confirma que não há conflito de nomes
+  e que a ordem de execução não depende de sp_settriggerorder (esse comando também não se usa).
+- Quando precisares de uma decisão tua para avançar, diz explicitamente "BLOQUEIO:" seguido do que é preciso e do que trava.
+  Só usa esta marca para bloqueios reais. Não termines respostas com pedidos de aprovação quando não há nada a bloquear.
+- .NET: antes de qualquer instalação, verificar as versões instaladas com `dotnet --list-sdks` e `dotnet --list-runtimes`.
+  O projeto alvo é net8.0: um SDK 10 (ou 9) já o compila. Só instalar o SDK 8 se a verificação mostrar que é mesmo necessário,
+  e dizer ao utilizador antes de o fazer. Documentar a versão de runtime exigida no servidor do cliente.
 - Segue as convenções do PHC e o código já existente. Prefere soluções simples.
 - Código comentado, com explicações simples do que cada bloco faz.
 - Não alteres a estrutura das tabelas nativas do PHC (CL, CL2).

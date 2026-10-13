@@ -1,0 +1,39 @@
+# Log do serviço durante o E2E (só identificadores; sem dados pessoais nem segredos)
+2026-10-13 11:33:32.158 | INFO | - | - | - | - | ARRANQUE | intervalo=0,05min | Serviço iniciado
+2026-10-13 11:34:16.201 | INFO | CL | CONTA | 13444-0 | Ang23072057043.3550000-1 | ENVIADO | Updated/sim-95887597 | -
+2026-10-13 11:34:16.312 | INFO | - | - | - | - | CICLO | lotes=1 enviados=1 erros=0 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:34:40.834 | INFO | CL | CONTA | 13444-0 | Ang23072057043.3550000-1 | ENVIADO | Updated/sim-95887597 | -
+2026-10-13 11:34:40.945 | INFO | - | - | - | - | CICLO | lotes=1 enviados=1 erros=0 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:34:59.280 | INFO | CL2 | CONTA | 13444-0 | Ang23072057043.3550000-1 | ENVIADO | Updated/sim-95887597 | -
+2026-10-13 11:34:59.392 | INFO | - | - | - | - | CICLO | lotes=1 enviados=1 erros=0 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:35:17.823 | INFO | U_CLCONTACT | CONTACTO | E2E-CONTACTO-0001 | E2E-CONTACTO-0001 | ENVIADO | Updated/sim-55769065 | -
+2026-10-13 11:35:17.987 | INFO | - | - | - | - | CICLO | lotes=1 enviados=1 erros=0 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:35:27.237 | INFO | U_CLCONTACT | CONTACTO | E2E-CONTACTO-0001 | E2E-CONTACTO-0001 | ENVIADO | Updated/sim-55769065 | -
+2026-10-13 11:35:27.329 | INFO | - | - | - | - | CICLO | lotes=1 enviados=1 erros=0 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:35:54.853 | AVISO | U_CLCONTACT | CONTACTO | E2E-CONTACTO-0001 | E2E-CONTACTO-0001 | SEM_ENVIO | - | Eliminação por tratar manualmente no CRM (a API não tem endpoint)
+2026-10-13 11:35:54.948 | INFO | - | - | - | - | CICLO | lotes=1 enviados=0 erros=0 sem_envio=1 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:36:07.210 | ERRO | CL | CONTA | 13444-0 | Ang23072057043.3550000-1 | ERRO | / | HTTP 422: pedido inválido (Invalid data content!)
+2026-10-13 11:36:07.309 | INFO | - | - | - | - | CICLO | lotes=1 enviados=0 erros=1 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:36:34.896 | INFO | CL | CONTA | 13444-0 | Ang23072057043.3550000-1 | ENVIADO | Updated/sim-95887597 | -
+2026-10-13 11:36:35.012 | INFO | - | - | - | - | CICLO | lotes=1 enviados=1 erros=0 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:36:44.204 | ERRO | CL-CONTA | CONTA | * | e5fe5107-a48f-48f7-9c15-724c73e264a8 | FALHA_AUTENTICACAO | registos=1 | HTTP 401: autenticação rejeitada pela API
+2026-10-13 11:36:44.214 | ERRO | CL | CONTA | 13444-0 | Ang23072057043.3550000-1 | ERRO | / | HTTP 401: autenticação rejeitada pela API
+2026-10-13 11:36:44.305 | INFO | - | - | - | - | CICLO | lotes=1 enviados=0 erros=1 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:36:56.668 | INFO | CL | CONTA | 13444-0 | Ang23072057043.3550000-1 | ENVIADO | Updated/sim-95887597 | -
+2026-10-13 11:36:56.886 | INFO | - | - | - | - | CICLO | lotes=1 enviados=1 erros=0 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:37:57.435 | ERRO | CL-CONTA | CONTA | * | 699b3fd0-5e2b-4e03-98dc-332c381d3bde | FALHA_REDE | registos=1 | Falha de rede ou timeout: Falha de rede: Nenhuma ligação pôde ser feita porque o computador de destino  as recusou ativamente. (127.0.0.1:8099)
+2026-10-13 11:37:57.474 | ERRO | CL | CONTA | 13444-0 | Ang23072057043.3550000-1 | ERRO | / | Falha de rede ou timeout: Falha de rede: Nenhuma ligação pôde ser feita porque o computador de destino  as recusou ativamente. (127.0.0.1:8099)
+2026-10-13 11:37:57.632 | INFO | - | - | - | - | CICLO | lotes=1 enviados=0 erros=1 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:39:23.534 | INFO | - | - | - | - | ARRANQUE | intervalo=0,05min | Serviço iniciado
+2026-10-13 11:39:24.634 | AVISO | - | - | - | - | RECUPERADO | 1 registo(s) | Registos em A_PROCESSAR voltaram a PENDENTE depois de uma paragem do serviço
+2026-10-13 11:39:25.184 | INFO | CL | CONTA | 13444-0 | Ang23072057043.3550000-1 | ENVIADO | Updated/sim-96734019 | -
+2026-10-13 11:39:25.340 | INFO | - | - | - | - | CICLO | lotes=1 enviados=1 erros=0 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:40:10.022 | INFO | - | - | - | - | ARRANQUE | intervalo=0,05min | Serviço iniciado
+2026-10-13 11:40:17.286 | AVISO | U_CLCONTACT | CONTACTO | E2E-CONTACTO-0002 | E2E-CONTACTO-0002 | TRUNCADO | campo=name | Valor acima do limite do CRM (5) truncado
+2026-10-13 11:40:17.500 | INFO | U_CLCONTACT | CONTACTO | E2E-CONTACTO-0002 | E2E-CONTACTO-0002 | ENVIADO | Updated/sim-06293731 | -
+2026-10-13 11:40:17.631 | INFO | - | - | - | - | CICLO | lotes=1 enviados=1 erros=0 sem_envio=0 a_aguardar=0 truncados=1 | Ciclo concluído
+2026-10-13 11:40:42.445 | INFO | - | - | - | - | LOGS_APAGADOS | 2 ficheiro(s) | Logs com mais de 7 dias apagados
+2026-10-13 11:40:51.648 | AVISO | U_CLCONTACT | CONTACTO | E2E-CONTACTO-0002 | E2E-CONTACTO-0002 | SEM_ENVIO | - | Eliminação por tratar manualmente no CRM (a API não tem endpoint)
+2026-10-13 11:40:51.732 | INFO | - | - | - | - | CICLO | lotes=1 enviados=0 erros=0 sem_envio=1 a_aguardar=0 truncados=0 | Ciclo concluído
+2026-10-13 11:41:00.910 | INFO | CL | CONTA | 13444-0 | Ang23072057043.3550000-1 | ENVIADO | Updated/sim-96734019 | -
+2026-10-13 11:41:01.012 | INFO | - | - | - | - | CICLO | lotes=1 enviados=1 erros=0 sem_envio=0 a_aguardar=0 truncados=0 | Ciclo concluído
