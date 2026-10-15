@@ -2,8 +2,8 @@
 -- tr_crm_u_clcontact (tabela U_CLCONTACT): INSERT, UPDATE e DELETE.
 --
 -- Compara inserted com deleted e só regista se mudou um campo integrado:
---   nome, funcao, tipo, telefone, tlmvl, email, departamento e a ligação à ficha (clstamp).
--- Não são integrados (a API não tem campo): contacto, fax, estab, no.
+--   nome, contacto, funcao, tipo, telefone, tlmvl, email, departamento e a ligação à ficha (clstamp).
+-- Não são integrados (a API não tem campo): fax, estab, no.
 --
 -- Exceção ao "não usar UPDATE(coluna)": a coluna OBS é do tipo text e o SQL Server não
 -- deixa ler colunas text em inserted/deleted num trigger AFTER, por isso não há como
@@ -35,6 +35,7 @@ BEGIN
           FROM (
                 SELECT u_clcontactstamp, clstamp,
                        nome         COLLATE Latin1_General_BIN2 AS nome,
+                       contacto     COLLATE Latin1_General_BIN2 AS contacto,
                        funcao       COLLATE Latin1_General_BIN2 AS funcao,
                        tipo         COLLATE Latin1_General_BIN2 AS tipo,
                        telefone     COLLATE Latin1_General_BIN2 AS telefone,
@@ -45,6 +46,7 @@ BEGIN
                 EXCEPT
                 SELECT u_clcontactstamp, clstamp,
                        nome         COLLATE Latin1_General_BIN2,
+                       contacto     COLLATE Latin1_General_BIN2,
                        funcao       COLLATE Latin1_General_BIN2,
                        tipo         COLLATE Latin1_General_BIN2,
                        telefone     COLLATE Latin1_General_BIN2,

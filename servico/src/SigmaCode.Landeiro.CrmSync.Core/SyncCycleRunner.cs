@@ -63,7 +63,7 @@ public sealed class SyncCycleRunner
         {
             ct.ThrowIfCancellationRequested();
             var items = await _store
-                .GetPendingAsync(source.Entity, source.AccountType, source.Origins, after, _options.BatchSize, ct)
+                .GetPendingAsync(source.Entity, source.AccountType, source.Origins, after, _options.BatchSize, _options.SendDelaySeconds, ct)
                 .ConfigureAwait(false);
             if (items.Count == 0) break;
 
@@ -195,6 +195,21 @@ public sealed class SyncCycleRunner
             var owner = toSend.First(x => x.Row.Stamp == w.SourceStamp).Item;
             _log.Write(new AuditEntry(AuditLevel.Warning, owner.Origin, owner.Entity, owner.Code, owner.SourceStamp, "TRUNCADO",
                 $"campo={w.Field}", $"Valor acima do limite do CRM ({w.Limit}) truncado"));
+        }
+
+        // Ajustes feitos para o CRM aceitar a linha (email e nome): avisa sem registar o valor
+        foreach (var a in payload.Adjustments)
+        {
+            var owner = toSend.First(x => x.Row.Stamp == a.SourceStamp).Item;
+            _log.Write(new AuditEntry(AuditLevel.Warning, owner.Origin, owner.Entity, owner.Code, owner.SourceStamp, a.Rule,
+                $"campo={a.Field}", a.Rule switch
+                {
+                    FieldSanitizer.EmailAdjusted => "Vários emails ou texto no campo: enviado o primeiro email válido",
+                    FieldSanitizer.EmailInvalid => "Nenhum email válido: enviado vazio (o CRM mantém o valor que tiver)",
+                    FieldSanitizer.NameMissing => "Nome em falta no PHC: enviado \"Sem nome\"",
+                    FieldSanitizer.PostalCodeAdjusted => "Código postal com localidade: enviado só o NNNN-NNN",
+                    _ => "Valor ajustado para o CRM aceitar a linha",
+                }));
         }
 
         var call = await _api.PostAsync(source.Endpoint, payload.Json, ct).ConfigureAwait(false);

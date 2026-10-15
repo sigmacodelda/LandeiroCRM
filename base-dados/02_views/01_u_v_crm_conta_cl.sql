@@ -6,6 +6,7 @@
 -- é feita no serviço, com base nos limites da configuração.
 --   code        = cl.no + '-' + cl.estab (sede = "13444-0", estabelecimento = "13444-1")
 --   country     = cl2.descpais (LEFT JOIN: cliente sem CL2 fica com país vazio)
+--   status      = "Ativo" ou "Inativo" (cl.inactivo). O CRM mantém o estado se o campo vier vazio.
 --   accountType = fixo "CLI" (FL -> "FOR", PE -> "COL" nas views futuras)
 -- Fora do âmbito (não enviados): obsCreation, obsExclusion, currentBalance, earliestDueDate.
 -- =============================================================================
@@ -25,7 +26,8 @@ SELECT
     LTRIM(RTRIM(c.tlmvl))                                         AS mobilePhone,
     LTRIM(RTRIM(c.email))                                         AS email,
     LTRIM(RTRIM(c.fax))                                           AS fax,
-    CONVERT(varchar(3), 'CLI')                                    AS accountType
+    CONVERT(varchar(3), 'CLI')                                    AS accountType,
+    CONVERT(varchar(7), CASE WHEN c.inactivo = 1 THEN 'Inativo' ELSE 'Ativo' END) AS status
 FROM dbo.cl AS c
 LEFT JOIN dbo.cl2 AS x ON x.cl2stamp = c.clstamp;
 GO

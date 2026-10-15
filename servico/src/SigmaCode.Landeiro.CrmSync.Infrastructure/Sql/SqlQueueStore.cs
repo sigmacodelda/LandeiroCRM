@@ -45,7 +45,7 @@ UPDATE dbo.u_crmfila
 
     public async Task<IReadOnlyList<QueueItem>> GetPendingAsync(
         string entity, string accountType, IReadOnlyCollection<string> origins,
-        string afterQueueStamp, int max, CancellationToken ct)
+        string afterQueueStamp, int max, int minAgeSeconds, CancellationToken ct)
     {
         if (origins.Count == 0) return Array.Empty<QueueItem>();
 
@@ -59,12 +59,14 @@ SELECT TOP (@max)
   FROM dbo.u_crmfila
  WHERE estado = @pendente AND entidade = @entidade AND tipoconta = @tipoconta
    AND origem IN ({originParams}) AND u_crmfilastamp > @depois
+   AND datacriacao <= DATEADD(SECOND, -@atraso, GETDATE())
  ORDER BY u_crmfilastamp";
         cmd.Parameters.AddWithValue("@max", max);
         cmd.Parameters.AddWithValue("@pendente", QueueStatus.Pending);
         cmd.Parameters.AddWithValue("@entidade", entity);
         cmd.Parameters.AddWithValue("@tipoconta", accountType);
         cmd.Parameters.AddWithValue("@depois", afterQueueStamp);
+        cmd.Parameters.AddWithValue("@atraso", minAgeSeconds);
 
         var items = new List<QueueItem>();
         await using var reader = await cmd.ExecuteReaderAsync(ct).ConfigureAwait(false);

@@ -18,11 +18,11 @@ DECLARE @nContComFicha int = (SELECT COUNT(*) FROM dbo.u_clcontact k JOIN dbo.cl
 SELECT @txt = STRING_AGG(COLUMN_NAME, ',') WITHIN GROUP (ORDER BY ORDINAL_POSITION)
   FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'u_v_crm_conta_cl';
 INSERT @r (teste, ok, detalhe) VALUES ('V1 colunas da view de contas = nomes da API + stamp',
-    CASE WHEN @txt = 'stamp,code,name,address,postalCode,city,country,vatNumber,phone,mobilePhone,email,fax,accountType' THEN 1 ELSE 0 END, @txt);
+    CASE WHEN @txt = 'stamp,code,name,address,postalCode,city,country,vatNumber,phone,mobilePhone,email,fax,accountType,status' THEN 1 ELSE 0 END, @txt);
 SELECT @txt = STRING_AGG(COLUMN_NAME, ',') WITHIN GROUP (ORDER BY ORDINAL_POSITION)
   FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'u_v_crm_contacto_cl';
 INSERT @r (teste, ok, detalhe) VALUES ('V2 colunas da view de contactos = nomes da API + stamp/accountStamp',
-    CASE WHEN @txt = 'stamp,accountStamp,accountCode,contactCode,name,title,mattersType,phoneOffice,phoneMobile,obs,email,department' THEN 1 ELSE 0 END, @txt);
+    CASE WHEN @txt = 'stamp,accountStamp,accountCode,contactCode,name,title,mattersType,phoneOffice,phoneMobile,obs,email,department,status' THEN 1 ELSE 0 END, @txt);
 
 -- V3: os campos fora do âmbito NÃO existem nas views
 SELECT @q = COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
@@ -58,7 +58,7 @@ INSERT @r (teste, ok, detalhe) VALUES ('V7 cliente sem CL2: 1 linha com país va
 
 -- Contactos
 INSERT dbo.u_clcontact (u_clcontactstamp, clstamp, nome, funcao, tipo, telefone, tlmvl, email, departamento, obs, contacto, fax, estab, no)
-VALUES ('CRMT-K-01', 'CRMT-CL-01', ' Maria Teste ', ' Gerente ', ' Financeiro ', ' 220111111 ', ' 910111111 ', ' m@t.pt ', ' Contabilidade ', ' obs curta ', 'Campo contacto', '220999999', 0, 99999991),
+VALUES ('CRMT-K-01', 'CRMT-CL-01', ' Maria Teste ', ' Gerente ', ' Financeiro ', ' 220111111 ', ' 910111111 ', ' m@t.pt ', ' Contabilidade ', ' obs curta ', '', '220999999', 0, 99999991),
        ('CRMT-K-02', 'CRMT-CL-01', 'Contacto com estab diferente', '', '', '', '', '', '', '', '', '', 5, 99999991),
        ('CRMT-K-03', 'CRMT-CL-02', 'Contacto do estabelecimento', '', '', '', '', '', '', '', '', '', 0, 99999991),
        ('CRMT-K-ORF', 'CRMT-SEM-FICHA', 'Orfão', '', '', '', '', '', '', '', '', '', 0, 0);

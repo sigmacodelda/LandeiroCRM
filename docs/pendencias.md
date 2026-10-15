@@ -3,6 +3,18 @@
 Atualizado em 2026-10-13. As pendências **P1 a P12** são as questões do [email para a Orcinus](email-orcinus.md)
 (numeração original). **O email (por enviar) só leva P1, P2, P5, P4, P8 e P11** (renumeradas 1 a 6 no email); as restantes ficam resolvidas pela documentação ou adiadas (ver abaixo). As **S1 a S10** são internas (SigmaCode / Carnes Landeiro).
 
+## Respostas da Orcinus (2026-10-14)
+
+| Questão | Resposta | Consequência |
+|---|---|---|
+| P1 Acesso à API | Pontos de entrada ativos; autentica só com `Authorization: Bearer <token>`; POST em JSON. **Confirmado** a 2026-10-14: `200` com `{"accounts":[],"success":0,"fail":0}` com token e `401 {"error":"Unauthorized"}` sem token. | **Resolvida.** O serviço já usa este formato; nada a alterar. |
+| P2 Código das contas | Existem `13444-0` e `13444-1`. Enviar o código `NO-ESTAB` atualiza; `13444` cria uma conta nova. O mesmo critério vale para `contactCode`. | **Resolvida.** Confirma a regra adotada. Desbloqueia a importação completa (continua a depender da tua decisão). |
+| P5 Campos vazios | Omitido, nulo ou vazio **mantém** o valor do CRM; não há forma de limpar um campo. | Limitação aceite: se um valor for apagado no PHC, o CRM mantém o antigo. O serviço continua a enviar o registo completo. |
+| P4 Eliminar/inativar | Não há eliminação. Criaram o campo `status` (contas e contactos): `Ativo`/`Inativo` (também `Active`/`Inactive`, `true`/`false`, `1`/`0`); vazio ou em falta mantém o estado. | **Implementado** nas views e no trigger (testes SQL 06). **Decidido (opção B):** só se enviam clientes ativos; um inativo nunca enviado não entra (nem os contactos dele) e, se ficar ativo no PHC, passa a ser enviado; um já enviado que fique inativo envia `Inativo`. As eliminações continuam `SEM_ENVIO`. |
+| P8 Obrigatórios e tamanhos | Obrigatórios: `code`; na criação `name`; nos contactos `contactCode` e `accountCode` (conta já existente). Tamanhos em `FieldLimits` (`appsettings.json`). `email` tem de ser válido quando vem preenchido. Num lote, cada linha é tratada à parte (`200` ou `206`). | Limites aplicados. **Duas decisões abertas:** emails inválidos e contactos sem nome. |
+
+Dados na LAND2_DEMO (cópia): 215 de 1 905 contas com email (11%) têm email que o CRM rejeitaria (vários emails, texto como "Não Têm"); 369 contactos têm o nome vazio e o `name` é obrigatório na criação.
+
 ## Com a Orcinus (email por rever e enviar)
 
 | # | Questão | Estado | Impacto | O que assumimos até haver resposta |

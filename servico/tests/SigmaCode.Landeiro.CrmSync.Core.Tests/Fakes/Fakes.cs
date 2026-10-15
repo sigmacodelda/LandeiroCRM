@@ -42,7 +42,7 @@ public sealed class FakeQueueStore : IQueueStore
     }
 
     public Task<IReadOnlyList<QueueItem>> GetPendingAsync(string entity, string accountType, IReadOnlyCollection<string> origins,
-        string afterQueueStamp, int max, CancellationToken ct)
+        string afterQueueStamp, int max, int minAgeSeconds, CancellationToken ct)
     {
         IReadOnlyList<QueueItem> result = Rows
             .Where(r => r.Status == QueueStatus.Pending && r.Item.Entity == entity && r.Item.AccountType == accountType

@@ -7,6 +7,7 @@
 --       - D substitui um U pendente;
 --       - U sobre um D pendente repõe-no como U (o registo voltou a existir);
 --       - U sobre U pendente só atualiza o código;
+--   * só ativos: contas inativas nunca enviadas (e os contactos delas) não entram (ver 1b);
 --   * caso contrário cria um novo PENDENTE, com stamp no formato PHC.
 -- Stamp: 'CRM' + yymmdd + hhmmss + ',' + 8 dígitos da sequência = 24 caracteres (char 25),
 -- igual ao padrão dos stamps existentes (ex.: FIL26091153534,171313351).
@@ -39,6 +40,25 @@ BEGIN
         FROM @ev AS e
     ) AS x
     WHERE x.rn = 1;
+
+    -- 1b) Regra "só ativos": uma conta INATIVA que nunca foi enviada (sem ENVIADO na fila) não entra,
+    --     nem os contactos dela. Se for ativada mais tarde, o trigger gera o evento e passa a entrar.
+    --     Uma conta inativa que já foi enviada continua a entrar (para o CRM receber o estado "Inativo").
+    --     As eliminações (D) não são filtradas.
+    DELETE r
+      FROM @r AS r
+      JOIN dbo.cl AS c ON c.clstamp = r.stamporigem
+     WHERE r.entidade = 'CONTA' AND r.operacao = 'U' AND c.inactivo = 1
+       AND NOT EXISTS (SELECT 1 FROM dbo.u_crmfila AS f
+                        WHERE f.entidade = 'CONTA' AND f.estado = 'ENVIADO' AND f.stamporigem = c.clstamp);
+
+    DELETE r
+      FROM @r AS r
+      JOIN dbo.u_clcontact AS k ON k.u_clcontactstamp = r.stamporigem
+      JOIN dbo.cl AS c ON c.clstamp = k.clstamp
+     WHERE r.entidade = 'CONTACTO' AND r.operacao = 'U' AND c.inactivo = 1
+       AND NOT EXISTS (SELECT 1 FROM dbo.u_crmfila AS f
+                        WHERE f.entidade = 'CONTA' AND f.estado = 'ENVIADO' AND f.stamporigem = c.clstamp);
 
     -- 2) Já existe PENDENTE do mesmo registo: atualiza-o em vez de criar outro
     UPDATE f

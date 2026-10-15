@@ -275,6 +275,23 @@ public class SyncCycleRunnerTests
         for (var i = 0; i < 5; i++) Assert.Equal(QueueStatus.Pending, _store.Get($"KW{i}", "CONTACTO").Status);
     }
 
+    // ---------- ajustes para o CRM aceitar a linha ----------
+    [Fact]
+    public async Task ContactWithoutName_IsSentAsSemNome_AndWarnedWithoutTheValue()
+    {
+        Account("A1", "1-0");
+        Contact("K1", "A1", "1-0", name: "");
+
+        await Runner().RunCycleAsync(CancellationToken.None);
+
+        using var doc = JsonDocument.Parse(_api.Calls[1].Body);
+        Assert.Equal("Sem nome", doc.RootElement.GetProperty("contacts")[0].GetProperty("name").GetString());
+        var warning = Assert.Single(_log.Entries, e => e.Result == "NOME_EM_FALTA");
+        Assert.Equal(AuditLevel.Warning, warning.Level);
+        Assert.Equal("K1", warning.Stamp);
+        Assert.Equal(QueueStatus.Sent, _store.Get("K1", "CONTACTO").Status);
+    }
+
     // ---------- truncagem ----------
     [Fact]
     public async Task ValueAboveTheLimit_IsTruncatedInTheJson_AndWarnedWithoutTheValue()

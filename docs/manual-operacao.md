@@ -67,6 +67,9 @@ Ficheiros `logs\crmsync-AAAAMMDD.log` (junto ao serviço). Uma linha por evento,
 | `FALHA_REDE` | ERRO | O pedido nem chegou (rede, timeout, ligação recusada). Todo o lote em ERRO. **Em destaque.** |
 | `FALHA_AUTENTICACAO` | ERRO | 401/403. Todo o lote em ERRO. **Em destaque.** |
 | `TRUNCADO` | AVISO | Um campo excedeu o limite do CRM (o detalhe diz qual; nunca o valor). |
+| `EMAIL_AJUSTADO` / `EMAIL_INVALIDO` | AVISO | Email com vários valores (enviado o primeiro válido) ou sem nenhum válido (enviado vazio). Só o campo, nunca o valor. |
+| `NOME_EM_FALTA` | AVISO | Contacto sem nome no PHC: enviado "Sem nome". |
+| `CODPOSTAL_AJUSTADO` | AVISO | Código postal com localidade: enviado só o `NNNN-NNN`. |
 | `SEM_ENVIO` | AVISO | Eliminação por tratar à mão no CRM. |
 | `AGUARDA_CONTA` | INFO | Contacto à espera da conta. |
 | `RECUPERADO` | AVISO | Registos em A_PROCESSAR repostos a PENDENTE depois de uma paragem. |

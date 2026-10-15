@@ -93,15 +93,15 @@ CLOSE cur; DEALLOCATE cur;
 INSERT @r (teste, ok, detalhe) VALUES ('K3 cada campo integrado (funcao, tipo, telefone, tlmvl, email, departamento) gera PENDENTE',
     CASE WHEN @falhou = '' THEN 1 ELSE 0 END, CONCAT('campos que falharam: ', NULLIF(@falhou, '')));
 
--- K4: campos NÃO integrados (fax, contacto, estab, no) não geram fila
+-- K4: campos NÃO integrados (fax, estab, no) não geram fila (o campo contacto passou a ser integrado: ver teste 07)
 UPDATE dbo.u_crmfila SET estado = 'ENVIADO' WHERE stamporigem = @k1;
-UPDATE dbo.u_clcontact SET fax = '999', contacto = 'Outro nome', estab = 7, no = 12345 WHERE u_clcontactstamp = @k1;
+UPDATE dbo.u_clcontact SET fax = '999', estab = 7, no = 12345 WHERE u_clcontactstamp = @k1;
 SELECT @q = COUNT(*) FROM dbo.u_crmfila WHERE stamporigem = @k1 AND estado = 'PENDENTE';
-INSERT @r (teste, ok, detalhe) VALUES ('K4 alterar fax/contacto/estab/no NÃO gera fila', CASE WHEN @q = 0 THEN 1 ELSE 0 END, CONCAT('pendentes=', @q));
+INSERT @r (teste, ok, detalhe) VALUES ('K4 alterar fax/estab/no NÃO gera fila', CASE WHEN @q = 0 THEN 1 ELSE 0 END, CONCAT('pendentes=', @q));
 
 -- K5: UPDATE sem mudanças nos campos integrados (e sem tocar na obs) não gera fila
 UPDATE dbo.u_clcontact SET nome = nome, funcao = funcao, tipo = tipo, telefone = telefone, tlmvl = tlmvl,
-                           email = email, departamento = departamento, clstamp = clstamp
+                           email = email, departamento = departamento, clstamp = clstamp, contacto = contacto
  WHERE u_clcontactstamp = @k1;
 SELECT @q = COUNT(*) FROM dbo.u_crmfila WHERE stamporigem = @k1 AND estado = 'PENDENTE';
 INSERT @r (teste, ok, detalhe) VALUES ('K5 UPDATE sem mudanças NÃO gera fila', CASE WHEN @q = 0 THEN 1 ELSE 0 END, CONCAT('pendentes=', @q));

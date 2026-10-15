@@ -23,8 +23,8 @@ DECLARE @histAntes int;
 INSERT @h EXEC dbo.up_crm_consulta_historico @no = 13444;
 SELECT @histAntes = COUNT(*) FROM @h;
 DELETE @h;
-SELECT @expC = COUNT(*) FROM dbo.cl WHERE no = 13444;
-SELECT @expK = COUNT(*) FROM dbo.u_clcontact k JOIN dbo.cl c ON c.clstamp = k.clstamp WHERE c.no = 13444;
+SELECT @expC = COUNT(*) FROM dbo.cl AS c WHERE c.no = 13444 AND (c.inactivo = 0 OR EXISTS (SELECT 1 FROM dbo.u_crmfila AS f WHERE f.entidade = 'CONTA' AND f.estado = 'ENVIADO' AND f.stamporigem = c.clstamp));
+SELECT @expK = COUNT(*) FROM dbo.u_clcontact k JOIN dbo.cl c ON c.clstamp = k.clstamp WHERE c.no = 13444 AND (c.inactivo = 0 OR EXISTS (SELECT 1 FROM dbo.u_crmfila AS f WHERE f.entidade = 'CONTA' AND f.estado = 'ENVIADO' AND f.stamporigem = c.clstamp));
 INSERT @res EXEC dbo.up_crm_carga @origem = 'CL', @no = 13444;
 SELECT @a = a, @b = b FROM @res;
 INSERT @r (teste, ok, detalhe) VALUES ('L1 carga do cliente 13444 enfileira todas as suas fichas e contactos',
@@ -60,12 +60,12 @@ INSERT @r (teste, ok, detalhe) VALUES ('L6 histórico do 13444 devolve as contas
 
 -- ===== CARGA TOTAL =====
 UPDATE dbo.u_crmfila SET estado = 'ENVIADO' WHERE estado = 'PENDENTE';
-SELECT @expC = COUNT(*) FROM dbo.cl;
-SELECT @expK = COUNT(*) FROM dbo.u_clcontact k JOIN dbo.cl c ON c.clstamp = k.clstamp;
+SELECT @expC = COUNT(*) FROM dbo.cl AS c WHERE (c.inactivo = 0 OR EXISTS (SELECT 1 FROM dbo.u_crmfila AS f WHERE f.entidade = 'CONTA' AND f.estado = 'ENVIADO' AND f.stamporigem = c.clstamp));
+SELECT @expK = COUNT(*) FROM dbo.u_clcontact k JOIN dbo.cl c ON c.clstamp = k.clstamp WHERE (c.inactivo = 0 OR EXISTS (SELECT 1 FROM dbo.u_crmfila AS f WHERE f.entidade = 'CONTA' AND f.estado = 'ENVIADO' AND f.stamporigem = c.clstamp));
 DELETE @res;
 INSERT @res EXEC dbo.up_crm_carga @origem = 'CL';
 SELECT @a = a, @b = b FROM @res;
-INSERT @r (teste, ok, detalhe) VALUES ('L7 carga total: todas as fichas CL e todos os contactos com ficha (sem órfãos)',
+INSERT @r (teste, ok, detalhe) VALUES ('L7 carga total: fichas ativas (ou já enviadas) e os seus contactos (sem órfãos)',
     CASE WHEN @a = @expC AND @b = @expK THEN 1 ELSE 0 END, CONCAT('contas=', @a, '/', @expC, ' contactos=', @b, '/', @expK));
 DELETE @res;
 INSERT @res EXEC dbo.up_crm_carga @origem = 'CL';

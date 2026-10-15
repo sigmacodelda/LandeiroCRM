@@ -52,7 +52,7 @@ public class SqlQueueStoreTests : DemoDbTestBase
         await InsertRowAsync("CRMIT-Q-07", "PENDENTE", type: "FOR", origin: "FL");
         await InsertRowAsync("CRMIT-Q-08", "PENDENTE", origin: "OUTRA");
 
-        var items = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL", "CL2" }, "CRMIT-", 100, CancellationToken.None);
+        var items = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL", "CL2" }, "CRMIT-", 100, 0, CancellationToken.None);
 
         var mine = items.Where(i => i.QueueStamp.StartsWith("CRMIT-", StringComparison.Ordinal)).Select(i => i.QueueStamp).ToArray();
         Assert.Equal(new[] { "CRMIT-Q-01", "CRMIT-Q-02", "CRMIT-Q-03" }, mine);
@@ -66,12 +66,29 @@ public class SqlQueueStoreTests : DemoDbTestBase
     }
 
     [DbFact]
+    public async Task GetPending_WaitsForTheMinimumAge_BeforeReturningARecord()
+    {
+        // Um registo novo (acabado de entrar) e outro com 2 minutos
+        await InsertRowAsync("CRMIT-D-1", "PENDENTE");
+        await InsertRowAsync("CRMIT-D-2", "PENDENTE");
+        // (a tabela do PHC tem por defeito 1900-01-01: define-se a data de cada um)
+        await TestDb.ExecAsync("UPDATE dbo.u_crmfila SET datacriacao = GETDATE() WHERE u_crmfilastamp = 'CRMIT-D-1'");
+        await TestDb.ExecAsync("UPDATE dbo.u_crmfila SET datacriacao = DATEADD(MINUTE, -2, GETDATE()) WHERE u_crmfilastamp = 'CRMIT-D-2'");
+
+        var waiting = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, "CRMIT-D-", 100, 60, CancellationToken.None);
+        var noDelay = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, "CRMIT-D-", 100, 0, CancellationToken.None);
+
+        Assert.Equal(new[] { "CRMIT-D-2" }, waiting.Select(i => i.QueueStamp).ToArray());
+        Assert.Equal(new[] { "CRMIT-D-1", "CRMIT-D-2" }, noDelay.Select(i => i.QueueStamp).ToArray());
+    }
+
+    [DbFact]
     public async Task GetPending_PagesByQueueStamp()
     {
         for (var i = 1; i <= 5; i++) await InsertRowAsync($"CRMIT-P-{i}", "PENDENTE");
 
-        var first = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, "CRMIT-P-", 2, CancellationToken.None);
-        var second = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, first[^1].QueueStamp, 2, CancellationToken.None);
+        var first = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, "CRMIT-P-", 2, 0, CancellationToken.None);
+        var second = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, first[^1].QueueStamp, 2, 0, CancellationToken.None);
 
         Assert.Equal(new[] { "CRMIT-P-1", "CRMIT-P-2" }, first.Select(x => x.QueueStamp).ToArray());
         Assert.Equal(new[] { "CRMIT-P-3", "CRMIT-P-4" }, second.Select(x => x.QueueStamp).ToArray());
@@ -215,7 +232,7 @@ public class SqlSourceReaderAndLockTests : DemoDbTestBase
         Assert.Equal("CRMIT-CL-01", row.Stamp);
         Assert.Null(row.AccountStamp);
         Assert.Equal(
-            new[] { "code", "name", "address", "postalCode", "city", "country", "vatNumber", "phone", "mobilePhone", "email", "fax", "accountType" },
+            new[] { "code", "name", "address", "postalCode", "city", "country", "vatNumber", "phone", "mobilePhone", "email", "fax", "accountType", "status" },
             row.Fields.Select(f => f.Key).ToArray());
         var values = row.Fields.ToDictionary(f => f.Key, f => f.Value);
         Assert.Equal("99999981-0", values["code"]);
@@ -223,6 +240,7 @@ public class SqlSourceReaderAndLockTests : DemoDbTestBase
         Assert.Equal("Rua Teste", values["address"]);
         Assert.Equal("Espanha", values["country"]);
         Assert.Equal("CLI", values["accountType"]);
+        Assert.Equal("Ativo", values["status"]);
     }
 
     [DbFact]
@@ -283,6 +301,7 @@ public class EndToEndWithStubbedApiTests : DemoDbTestBase
     {
         ApiBaseUrl = "http://api.teste/index.php",
         BatchSize = 100,
+        SendDelaySeconds = 0,   // os testes enviam logo (o atraso de 60 s tem o seu próprio teste)
         FieldLimits = limits ?? new(),
         Sources =
         {

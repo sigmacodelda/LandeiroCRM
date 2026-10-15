@@ -14,7 +14,7 @@ public interface IQueueStore
     /// </summary>
     Task<IReadOnlyList<QueueItem>> GetPendingAsync(
         string entity, string accountType, IReadOnlyCollection<string> origins,
-        string afterQueueStamp, int max, CancellationToken ct);
+        string afterQueueStamp, int max, int minAgeSeconds, CancellationToken ct);
 
     /// <summary>
     /// Dos stamps de conta indicados, devolve os que estão "bloqueados": o último registo da fila dessa conta
