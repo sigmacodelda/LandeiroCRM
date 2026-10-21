@@ -13,7 +13,7 @@ IF EXISTS (SELECT 1 FROM dbo.cl WITH (NOLOCK) WHERE no BETWEEN 99999991 AND 9999
 DECLARE @r TABLE (n int IDENTITY(1,1), teste varchar(160), ok bit, detalhe varchar(300));
 DECLARE @c1 char(25) = 'CRMT-EV-C1', @c2 char(25) = 'CRMT-EV-C2', @k1 char(25) = 'CRMT-EV-K1', @k2 char(25) = 'CRMT-EV-K2',
         @k3 char(25) = 'CRMT-EV-K3', @korf char(25) = 'CRMT-EV-KO';
-DECLARE @q int, @t varchar(200);
+DECLARE @q int, @a int, @t varchar(200);
 
 BEGIN TRAN;
 
@@ -59,14 +59,59 @@ SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = @korf;
 INSERT @r (teste, ok, detalhe) VALUES ('E5 contacto órfão NÃO entra', CASE WHEN @q = 0 THEN 1 ELSE 0 END, CONCAT('linhas=', @q));
 
 -- E6: apagar contacto -> D PENDENTE (substitui o U pendente)
-EXEC dbo.sc_CrmEnfileirarEvento @origem = 'U_CLCONTACT', @stamp = @k1, @operacao = 'D';
-SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = @k1 AND estado = 'PENDENTE' AND operacao = 'D';
-INSERT @r (teste, ok, detalhe) VALUES ('E6 apagar contacto gera D PENDENTE', CASE WHEN @q = 1 THEN 1 ELSE 0 END, CONCAT('pendentes D=', @q));
+EXEC dbo.sc_CrmEnfileirarEvento @origem = 'U_CLCONTACT', @stamp = @k1, @operacao = 'D', @clstamp = @c1;
+SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = @k1 AND estado = 'PENDENTE' AND operacao = 'D' AND RTRIM(codigo) = 'CRMT-EV-K1|99999991-0';
+INSERT @r (teste, ok, detalhe) VALUES ('E6 apagar contacto gera D PENDENTE com contactCode|conta', CASE WHEN @q = 1 THEN 1 ELSE 0 END, CONCAT('pendentes D=', @q));
 
 -- E7: apagar ficha -> D PENDENTE (substitui o U pendente)
 EXEC dbo.sc_CrmEnfileirarEvento @origem = 'CL', @stamp = @c1, @operacao = 'D', @no = 99999991, @estab = 0;
 SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = @c1 AND entidade = 'CONTA' AND estado = 'PENDENTE' AND operacao = 'D';
 INSERT @r (teste, ok, detalhe) VALUES ('E7 apagar ficha gera D PENDENTE', CASE WHEN @q = 1 THEN 1 ELSE 0 END, CONCAT('pendentes D=', @q));
+
+-- E7b: apagar ficha com lista de contactos gera conta D + contactos D (com a conta no código)
+EXEC dbo.sc_CrmEnfileirarEvento @origem = 'CL', @stamp = @c2, @operacao = 'D', @no = 99999992, @estab = 0, @contactos = 'CRMT-EV-K2,CRMT-EV-K3';
+SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem IN (@k2, @k3) AND estado = 'PENDENTE' AND operacao = 'D' AND RTRIM(codigo) LIKE 'CRMT-EV-K_|99999992-0';
+INSERT @r (teste, ok, detalhe) VALUES ('E7b apagar a ficha apaga também os contactos da lista', CASE WHEN @q = 2 THEN 1 ELSE 0 END, CONCAT('contactos D=', @q));
+
+-- E7c: contactos apagados (lista) ao gravar geram D com a conta da ficha
+EXEC dbo.sc_CrmEnfileirarEvento @origem = 'U_CLCONTACT', @operacao = 'D', @clstamp = @c1, @contactos = 'CRMT-EV-K2,CRMT-EV-K3';
+SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem IN (@k2, @k3) AND estado = 'PENDENTE' AND operacao = 'D' AND RTRIM(codigo) LIKE 'CRMT-EV-K_|99999991-0';
+INSERT @r (teste, ok, detalhe) VALUES ('E7c contactos apagados (lista) geram D com contactCode|conta', CASE WHEN @q = 2 THEN 1 ELSE 0 END, CONCAT('contactos D=', @q));
+
+-- E11: contacto enviado que desapareceu da u_clcontact gera D com a conta; os que existem não
+INSERT dbo.u_crmfila (u_crmfilastamp, origem, entidade, tipoconta, stamporigem, codigo, operacao, estado, datacriacao)
+VALUES ('CRMT-EV-Q8', 'U_CLCONTACT', 'CONTACTO', 'CLI', 'CRMT-EV-K9', 'CRMT-EV-K9|99999991-0', 'U', 'ENVIADO', GETDATE()),
+       ('CRMT-EV-Q9', 'U_CLCONTACT', 'CONTACTO', 'CLI', @k2, 'CRMT-EV-K2|99999991-0', 'U', 'ENVIADO', GETDATE());
+DELETE dbo.u_crmfila WHERE stamporigem = @k2 AND estado = 'PENDENTE';
+EXEC dbo.sc_CrmEnfileirarEvento @origem = 'CL', @stamp = @c1, @operacao = 'U', @no = 99999991, @estab = 0, @inactivo = 0;
+SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = 'CRMT-EV-K9' AND estado = 'PENDENTE' AND operacao = 'D' AND RTRIM(codigo) = 'CRMT-EV-K9|99999991-0';
+INSERT @r (teste, ok, detalhe) VALUES ('E11a contacto enviado que já não existe gera D com contactCode|conta', CASE WHEN @q = 1 THEN 1 ELSE 0 END, CONCAT('pendentes D=', @q));
+SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = @k2 AND estado = 'PENDENTE' AND operacao = 'D';
+INSERT @r (teste, ok, detalhe) VALUES ('E11b contacto que ainda existe NÃO gera D', CASE WHEN @q = 0 THEN 1 ELSE 0 END, CONCAT('pendentes D=', @q));
+
+-- E12: contacto numa conta que nunca foi enviada cria também a conta
+INSERT dbo.cl (clstamp, no, estab, nome, inactivo) VALUES ('CRMT-EV-C3', 99999993, 0, 'Cliente 3', 0);
+INSERT dbo.u_clcontact (u_clcontactstamp, clstamp, nome, email) VALUES ('CRMT-EV-K4', 'CRMT-EV-C3', 'Pessoa 4', 'p4@teste.pt');
+EXEC dbo.sc_CrmEnfileirarEvento @origem = 'U_CLCONTACT', @stamp = 'CRMT-EV-K4', @operacao = 'U', @clstamp = 'CRMT-EV-C3', @temMeio = 1;
+SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = 'CRMT-EV-C3' AND entidade = 'CONTA' AND estado = 'PENDENTE' AND RTRIM(codigo) = '99999993-0';
+INSERT @r (teste, ok, detalhe) VALUES ('E12a contacto numa conta nunca enviada cria também a conta', CASE WHEN @q = 1 THEN 1 ELSE 0 END, CONCAT('contas=', @q));
+SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = 'CRMT-EV-K4' AND entidade = 'CONTACTO' AND estado = 'PENDENTE' AND RTRIM(codigo) = 'CRMT-EV-K4|99999993-0';
+INSERT @r (teste, ok, detalhe) VALUES ('E12b o contacto fica com contactCode|conta', CASE WHEN @q = 1 THEN 1 ELSE 0 END, CONCAT('contactos=', @q));
+
+-- E13: apagar a ficha apaga também os contactos já enviados (vistos na fila, sem lista do PHC)
+INSERT dbo.u_crmfila (u_crmfilastamp, origem, entidade, tipoconta, stamporigem, codigo, operacao, estado, datacriacao)
+VALUES ('CRMT-EV-Q7', 'U_CLCONTACT', 'CONTACTO', 'CLI', 'CRMT-EV-K5', 'CRMT-EV-K5|99999991-0', 'U', 'ENVIADO', GETDATE());
+EXEC dbo.sc_CrmEnfileirarEvento @origem = 'CL', @stamp = @c1, @operacao = 'D', @no = 99999991, @estab = 0;
+SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = 'CRMT-EV-K5' AND estado = 'PENDENTE' AND operacao = 'D' AND RTRIM(codigo) = 'CRMT-EV-K5|99999991-0';
+INSERT @r (teste, ok, detalhe) VALUES ('E13 apagar a ficha inativa os contactos já enviados (pela fila)', CASE WHEN @q = 1 THEN 1 ELSE 0 END, CONCAT('contactos D=', @q));
+
+-- E11c: contacto que nunca foi enviado (U pendente) e já não existe passa a D (sem erro no serviço)
+INSERT dbo.u_crmfila (u_crmfilastamp, origem, entidade, tipoconta, stamporigem, codigo, operacao, estado, datacriacao)
+VALUES ('CRMT-EV-Q6', 'U_CLCONTACT', 'CONTACTO', 'CLI', 'CRMT-EV-K8', 'CRMT-EV-K8|99999991-0', 'U', 'PENDENTE', GETDATE());
+EXEC dbo.sc_CrmEnfileirarEvento @origem = 'CL', @stamp = @c1, @operacao = 'U', @no = 99999991, @estab = 0, @inactivo = 0;
+SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = 'CRMT-EV-K8' AND estado = 'PENDENTE' AND operacao = 'D';
+SELECT @a = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = 'CRMT-EV-K8' AND estado = 'PENDENTE' AND operacao = 'U';
+INSERT @r (teste, ok, detalhe) VALUES ('E11c contacto nunca enviado e já apagado: o U pendente passa a D', CASE WHEN @q = 1 AND @a = 0 THEN 1 ELSE 0 END, CONCAT('D=', @q, ' U=', @a));
 
 -- E8: nunca dá erro ao PHC (operação inválida, parâmetros em falta)
 BEGIN TRY
