@@ -33,7 +33,7 @@ BEGIN
         SELECT f.u_crmfilastamp, f.entidade, f.stamporigem,
                ROW_NUMBER() OVER (PARTITION BY f.entidade, f.stamporigem
                                   ORDER BY f.datacriacao DESC, f.u_crmfilastamp DESC) AS rn
-          FROM dbo.u_crmfila AS f
+          FROM dbo.u_crmfila AS f WITH (NOLOCK)
          WHERE f.estado = 'ERRO'
            AND (@origem   IS NULL OR f.origem   = @origem)
            AND (@entidade IS NULL OR f.entidade = @entidade)
@@ -51,7 +51,7 @@ BEGIN
            f.usrhora = @hora
       FROM dbo.u_crmfila AS f
       JOIN @alvo AS a ON a.u_crmfilastamp = f.u_crmfilastamp
-     WHERE NOT EXISTS (SELECT 1 FROM dbo.u_crmfila AS p
+     WHERE NOT EXISTS (SELECT 1 FROM dbo.u_crmfila AS p WITH (NOLOCK)
                         WHERE p.estado = 'PENDENTE'
                           AND p.entidade = a.entidade
                           AND p.stamporigem = a.stamporigem);

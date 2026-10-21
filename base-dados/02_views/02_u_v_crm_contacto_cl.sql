@@ -39,6 +39,6 @@ SELECT
     LTRIM(RTRIM(k.email))                                         AS email,
     LTRIM(RTRIM(k.departamento))                                  AS department,
     CONVERT(varchar(7), CASE WHEN c.inactivo = 1 THEN 'Inativo' ELSE 'Ativo' END) AS status
-FROM dbo.u_clcontact AS k
-INNER JOIN dbo.cl AS c ON c.clstamp = k.clstamp;
+FROM dbo.u_clcontact AS k WITH (NOLOCK)
+INNER JOIN dbo.cl AS c WITH (NOLOCK) ON c.clstamp = k.clstamp;
 GO

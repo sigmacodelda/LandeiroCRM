@@ -29,7 +29,7 @@ BEGIN
                 EXCEPT
                 SELECT cl2stamp, descpais COLLATE Latin1_General_BIN2 FROM deleted
                ) AS n
-          JOIN dbo.cl AS c ON c.clstamp = n.cl2stamp;
+          JOIN dbo.cl AS c WITH (NOLOCK) ON c.clstamp = n.cl2stamp;
 
         IF EXISTS (SELECT 1 FROM @ev)
             EXEC dbo.up_crm_enfileirar @ev;

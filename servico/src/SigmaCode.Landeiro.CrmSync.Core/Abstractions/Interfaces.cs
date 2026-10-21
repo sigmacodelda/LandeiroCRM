@@ -23,6 +23,13 @@ public interface IQueueStore
     Task<IReadOnlySet<string>> GetBlockedSourceStampsAsync(
         string entity, string accountType, IReadOnlyCollection<string> sourceStamps, CancellationToken ct);
 
+    /// <summary>
+    /// Dos stamps indicados, devolve os que já foram enviados ao CRM alguma vez (têm um registo ENVIADO de alteração).
+    /// Serve para decidir se uma eliminação precisa de inativar algo no CRM.
+    /// </summary>
+    Task<IReadOnlySet<string>> GetEverSentSourceStampsAsync(
+        string entity, string accountType, IReadOnlyCollection<string> sourceStamps, CancellationToken ct);
+
     /// <summary>Passa os registos de PENDENTE a A_PROCESSAR. Devolve só os que foram mesmo reservados.</summary>
     Task<IReadOnlyList<QueueItem>> ClaimAsync(IReadOnlyList<QueueItem> items, CancellationToken ct);
 

@@ -183,10 +183,10 @@ public class SyncCycleRunnerTests
 
     // ---------- eliminações ----------
     [Fact]
-    public async Task DeleteOperation_IsMarkedNoSend_WithoutCallingTheApi()
+    public async Task DeleteOfNeverSentRecords_IsMarkedNoSend_WithoutCallingTheApi()
     {
         _store.Add("CONTA", "A1", "1-0", QueueOperation.Delete);
-        _store.Add("CONTACTO", "K1", "K1", QueueOperation.Delete);
+        _store.Add("CONTACTO", "K1", "K1|1-0", QueueOperation.Delete);
 
         var summary = await Runner().RunCycleAsync(CancellationToken.None);
 
@@ -197,7 +197,48 @@ public class SyncCycleRunnerTests
     }
 
     [Fact]
-    public async Task DeleteAndUpsertInTheSameBatch_OnlyTheUpsertGoesToTheApi()
+    public async Task DeletedAccountAlreadySent_IsSentAsInactive_OnlyWithItsCode()
+    {
+        _store.Add("CONTA", "A1", "1-0", status: QueueStatus.Sent);
+        _store.Add("CONTA", "A1", "1-0", QueueOperation.Delete);
+
+        var summary = await Runner().RunCycleAsync(CancellationToken.None);
+
+        Assert.Single(_api.Calls);
+        Assert.Equal("ImportAccounts", _api.Calls[0].Endpoint);
+        Assert.Equal("{\"accounts\":[{\"code\":\"1-0\",\"status\":\"Inativo\"}]}", _api.Calls[0].Body);
+        Assert.Equal(QueueStatus.Sent, _store.Get("A1", "CONTA").Status);
+        Assert.Equal(1, summary.Sent);
+    }
+
+    [Fact]
+    public async Task DeletedContactAlreadySent_IsSentAsInactive_WithAccountAndContactCodes()
+    {
+        _store.Add("CONTACTO", "K1", "K1", status: QueueStatus.Sent);
+        _store.Add("CONTACTO", "K1", "K1|1-0", QueueOperation.Delete);
+
+        await Runner().RunCycleAsync(CancellationToken.None);
+
+        Assert.Single(_api.Calls);
+        Assert.Equal("ImportContacts", _api.Calls[0].Endpoint);
+        Assert.Equal("{\"contacts\":[{\"accountCode\":\"1-0\",\"contactCode\":\"K1\",\"status\":\"Inativo\"}]}", _api.Calls[0].Body);
+        Assert.Equal(QueueStatus.Sent, _store.Get("K1", "CONTACTO").Status);
+    }
+
+    [Fact]
+    public async Task DeletedContactWithoutAccountCode_IsMarkedNoSend()
+    {
+        _store.Add("CONTACTO", "K1", "K1", status: QueueStatus.Sent);
+        _store.Add("CONTACTO", "K1", "K1", QueueOperation.Delete);   // ficha também já apagada: sem código da conta
+
+        await Runner().RunCycleAsync(CancellationToken.None);
+
+        Assert.Empty(_api.Calls);
+        Assert.Equal(QueueStatus.NotSent, _store.Get("K1", "CONTACTO").Status);
+    }
+
+    [Fact]
+    public async Task DeleteAndUpsertInTheSameBatch_OnlyTheUpsertGoesToTheApi_WhenTheDeletedWasNeverSent()
     {
         _store.Add("CONTA", "A0", "0-0", QueueOperation.Delete);
         Account("A1", "1-0");

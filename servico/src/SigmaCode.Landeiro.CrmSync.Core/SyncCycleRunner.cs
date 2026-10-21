@@ -98,18 +98,33 @@ public sealed class SyncCycleRunner
 
         try
         {
-            // 4) Eliminações: a API não tem endpoint, por isso não se chama (SEM_ENVIO + log, para tratamento manual)
-            foreach (var d in deletes.Where(x => claimedStamps.Contains(x.QueueStamp)))
+            var toSend = new List<(QueueItem Item, SourceRow Row)>();
+
+            // 4) Eliminações: a API não elimina, por isso o registo apagado é enviado como "Inativo", só com os códigos.
+            //    Se nunca foi enviado, o CRM não o tem e não há nada a inativar (SEM_ENVIO, sem chamar a API).
+            var claimedDeletes = deletes.Where(x => claimedStamps.Contains(x.QueueStamp)).ToList();
+            var everSent = claimedDeletes.Count == 0
+                ? new HashSet<string>(StringComparer.Ordinal)
+                : await _store.GetEverSentSourceStampsAsync(
+                        source.Entity, source.AccountType, claimedDeletes.Select(d => d.SourceStamp).Distinct().ToList(), ct)
+                    .ConfigureAwait(false);
+            foreach (var d in claimedDeletes)
             {
+                var inactive = BuildInactiveRow(source, d, everSent);
+                if (inactive is not null)
+                {
+                    toSend.Add((d, inactive));
+                    continue;
+                }
+
                 results.Add(new QueueResult(d, QueueStatus.NotSent, null, null,
-                    "Eliminação: a API não tem endpoint; tratar manualmente no CRM"));
+                    "Eliminação sem nada a inativar no CRM (nunca enviado ou sem a conta do contacto)"));
                 summary.NotSent++;
-                _log.Write(new AuditEntry(AuditLevel.Warning, d.Origin, d.Entity, d.Code, d.SourceStamp, "SEM_ENVIO", string.Empty,
-                    "Eliminação por tratar manualmente no CRM (a API não tem endpoint)"));
+                _log.Write(new AuditEntry(AuditLevel.Info, d.Origin, d.Entity, d.Code, d.SourceStamp, "SEM_ENVIO", string.Empty,
+                    "Eliminação sem nada a inativar no CRM (nunca enviado ou sem a conta do contacto)"));
             }
 
             // 5) Registos que já não existem na view (apagados entretanto) ficam em ERRO
-            var toSend = new List<(QueueItem Item, SourceRow Row)>();
             foreach (var u in ready.Where(x => claimedStamps.Contains(x.QueueStamp)))
             {
                 if (rows.TryGetValue(u.SourceStamp, out var row)) toSend.Add((u, row));
@@ -214,7 +229,7 @@ public sealed class SyncCycleRunner
 
         var call = await _api.PostAsync(source.Endpoint, payload.Json, ct).ConfigureAwait(false);
         var outcome = ApiResponseInterpreter.Interpret(
-            call, toSend.Select(x => x.Item.Code).ToList(), source.ResponseListProperty, source.ResponseCodeProperty);
+            call, toSend.Select(x => CrmCode(x.Item.Code)).ToList(), source.ResponseListProperty, source.ResponseCodeProperty);
 
         // Falhas de rede e de autenticação ficam em destaque no log (o pedido nem chegou a ser processado)
         if (outcome.Kind is BatchFailureKind.Network or BatchFailureKind.Authentication)
@@ -244,6 +259,43 @@ public sealed class SyncCycleRunner
                     $"{o.Action}/{o.CrmId}", message));
             }
         }
+    }
+
+    private const string InactiveStatus = "Inativo";
+
+    /// <summary>
+    /// Código que o CRM conhece: nas eliminações de contactos a fila guarda "contactCode|accountCode"
+    /// (o trigger grava o código da conta porque depois de apagado já não há como o saber).
+    /// </summary>
+    private static string CrmCode(string queueCode)
+    {
+        var i = queueCode.IndexOf('|');
+        return i < 0 ? queueCode : queueCode[..i];
+    }
+
+    /// <summary>
+    /// Linha mínima para inativar um registo apagado: conta = code + status; contacto = accountCode + contactCode + status.
+    /// Devolve null se não há nada a inativar (nunca enviado) ou faltam os códigos.
+    /// </summary>
+    private static SourceRow? BuildInactiveRow(SourceOptions source, QueueItem item, IReadOnlySet<string> everSent)
+    {
+        if (!everSent.Contains(item.SourceStamp)) return null;
+
+        var status = new KeyValuePair<string, string>("status", InactiveStatus);
+        if (string.Equals(source.Entity, "CONTACTO", StringComparison.Ordinal))
+        {
+            var parts = item.Code.Split('|');
+            if (parts.Length != 2 || string.IsNullOrWhiteSpace(parts[0]) || string.IsNullOrWhiteSpace(parts[1])) return null;
+            return new SourceRow(item.SourceStamp, null, new[]
+            {
+                new KeyValuePair<string, string>("accountCode", parts[1]),
+                new KeyValuePair<string, string>("contactCode", parts[0]),
+                status,
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(item.Code)) return null;
+        return new SourceRow(item.SourceStamp, null, new[] { new KeyValuePair<string, string>("code", item.Code), status });
     }
 
     private static string Limit(string? text)

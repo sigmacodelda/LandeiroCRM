@@ -6,7 +6,7 @@
 SET NOCOUNT ON;
 IF DB_NAME() <> N'LAND2_DEMO' THROW 50000, N'Este teste só pode correr na LAND2_DEMO.', 1;
 IF DATABASE_PRINCIPAL_ID(N'crmsync_servico') IS NULL THROW 50003, N'Falta o papel crmsync_servico (05_permissoes).', 1;
-IF EXISTS (SELECT 1 FROM dbo.cl WHERE no BETWEEN 99999991 AND 99999999)
+IF EXISTS (SELECT 1 FROM dbo.cl WITH (NOLOCK) WHERE no BETWEEN 99999991 AND 99999999)
     THROW 50002, N'Números de cliente de teste (99999991..99999999) já em uso.', 1;
 
 DECLARE @r TABLE (n int IDENTITY(1,1), teste varchar(160), ok bit, detalhe varchar(400));
@@ -25,7 +25,7 @@ EXECUTE AS USER = 'crmt_phc';
 BEGIN TRY
     INSERT dbo.cl (clstamp, no, estab, nome) VALUES ('CRMT-CL-01', 99999991, 0, 'Perm');
     INSERT dbo.cl2 (cl2stamp, descpais) VALUES ('CRMT-CL-01', 'Portugal');
-    INSERT dbo.u_clcontact (u_clcontactstamp, clstamp, nome) VALUES ('CRMT-K-01', 'CRMT-CL-01', 'Pessoa');
+    INSERT dbo.u_clcontact (u_clcontactstamp, clstamp, nome, email) VALUES ('CRMT-K-01', 'CRMT-CL-01', 'Pessoa', 'k1@teste.pt');
     UPDATE dbo.u_clcontact SET nome = 'Pessoa 2' WHERE u_clcontactstamp = 'CRMT-K-01';
     UPDATE dbo.cl2 SET descpais = 'Espanha' WHERE cl2stamp = 'CRMT-CL-01';
 END TRY
@@ -34,7 +34,7 @@ BEGIN CATCH
 END CATCH
 REVERT;
 INSERT @r (teste, ok, detalhe) VALUES ('P1a utilizador PHC sem direitos na fila grava CL, CL2 e contactos sem erro', CASE WHEN @err = '' THEN 1 ELSE 0 END, @err);
-SELECT @q = COUNT(*) FROM dbo.u_crmfila WHERE stamporigem IN ('CRMT-CL-01', 'CRMT-K-01') AND estado = 'PENDENTE';
+SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem IN ('CRMT-CL-01', 'CRMT-K-01') AND estado = 'PENDENTE';
 INSERT @r (teste, ok, detalhe) VALUES ('P1b os triggers conseguiram escrever na fila (cadeia de propriedade: conta + contacto)', CASE WHEN @q = 2 THEN 1 ELSE 0 END, CONCAT('pendentes=', @q));
 
 -- ===== P2: o papel do serviço tem só o mínimo =====
@@ -43,10 +43,10 @@ ALTER ROLE crmsync_servico ADD MEMBER crmt_svc;
 
 DECLARE @okViews bit = 0, @okFila bit = 0, @negaCl bit = 0, @negaContactos bit = 0, @negaInsert bit = 0, @negaDelete bit = 0, @okLock bit = 0, @okConsulta bit = 0;
 EXECUTE AS USER = 'crmt_svc';
-BEGIN TRY SELECT TOP 1 @q = 1 FROM dbo.u_v_crm_conta_cl;    SELECT TOP 1 @q = 1 FROM dbo.u_v_crm_contacto_cl; SET @okViews = 1; END TRY BEGIN CATCH END CATCH
-BEGIN TRY UPDATE dbo.u_crmfila SET estado = 'A_PROCESSAR' WHERE stamporigem = 'CRMT-CL-01'; SELECT TOP 1 @q = 1 FROM dbo.u_crmfila; SET @okFila = 1; END TRY BEGIN CATCH END CATCH
-BEGIN TRY SELECT TOP 1 @q = 1 FROM dbo.cl; END TRY BEGIN CATCH SET @negaCl = 1; END CATCH
-BEGIN TRY SELECT TOP 1 @q = 1 FROM dbo.u_clcontact; END TRY BEGIN CATCH SET @negaContactos = 1; END CATCH
+BEGIN TRY SELECT TOP 1 @q = 1 FROM dbo.u_v_crm_conta_cl WITH (NOLOCK);    SELECT TOP 1 @q = 1 FROM dbo.u_v_crm_contacto_cl WITH (NOLOCK); SET @okViews = 1; END TRY BEGIN CATCH END CATCH
+BEGIN TRY UPDATE dbo.u_crmfila SET estado = 'A_PROCESSAR' WHERE stamporigem = 'CRMT-CL-01'; SELECT TOP 1 @q = 1 FROM dbo.u_crmfila WITH (NOLOCK); SET @okFila = 1; END TRY BEGIN CATCH END CATCH
+BEGIN TRY SELECT TOP 1 @q = 1 FROM dbo.cl WITH (NOLOCK); END TRY BEGIN CATCH SET @negaCl = 1; END CATCH
+BEGIN TRY SELECT TOP 1 @q = 1 FROM dbo.u_clcontact WITH (NOLOCK); END TRY BEGIN CATCH SET @negaContactos = 1; END CATCH
 BEGIN TRY
     INSERT dbo.u_crmfila (u_crmfilastamp, origem, entidade, tipoconta) VALUES ('CRMT-X-01', 'CL', 'CONTA', 'CLI');
 END TRY BEGIN CATCH SET @negaInsert = 1; END CATCH
@@ -74,13 +74,13 @@ EXEC sp_rename 'dbo.u_crmfila', 'u_crmfila_indisponivel';   -- simula a fila ind
 SET @err = '';
 BEGIN TRY
     UPDATE dbo.cl SET nome = 'Gravou apesar da fila' WHERE clstamp = 'CRMT-CL-01';
-    INSERT dbo.u_clcontact (u_clcontactstamp, clstamp, nome) VALUES ('CRMT-K-02', 'CRMT-CL-01', 'Outra');
+    INSERT dbo.u_clcontact (u_clcontactstamp, clstamp, nome, email) VALUES ('CRMT-K-02', 'CRMT-CL-01', 'Outra', 'k2@teste.pt');
     DELETE dbo.u_clcontact WHERE u_clcontactstamp = 'CRMT-K-02';
 END TRY
 BEGIN CATCH
     SET @err = ERROR_MESSAGE();
 END CATCH
-SELECT @nome = nome FROM dbo.cl WHERE clstamp = 'CRMT-CL-01';
+SELECT @nome = nome FROM dbo.cl WITH (NOLOCK) WHERE clstamp = 'CRMT-CL-01';
 INSERT @r (teste, ok, detalhe) VALUES ('P3a com a fila indisponível a gravação na CL/contactos NÃO falha', CASE WHEN @err = '' THEN 1 ELSE 0 END, @err);
 INSERT @r (teste, ok, detalhe) VALUES ('P3b a alteração do PHC ficou gravada', CASE WHEN @nome = 'Gravou apesar da fila' THEN 1 ELSE 0 END, @nome);
 INSERT @r (teste, ok, detalhe) VALUES ('P3c a transação do PHC continua utilizável (XACT_STATE = 1)', CASE WHEN XACT_STATE() = 1 THEN 1 ELSE 0 END, CONCAT('XACT_STATE=', XACT_STATE()));
@@ -89,7 +89,7 @@ SET XACT_ABORT OFF;
 
 ROLLBACK TRAN;
 
-SELECT @q = COUNT(*) FROM dbo.u_crmfila WHERE stamporigem LIKE 'CRMT-%' OR u_crmfilastamp LIKE 'CRMT-%';
+SELECT @q = COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem LIKE 'CRMT-%' OR u_crmfilastamp LIKE 'CRMT-%';
 INSERT @r (teste, ok, detalhe) VALUES ('P4 rollback não deixa dados de teste', CASE WHEN @q = 0 THEN 1 ELSE 0 END, CONCAT('restos=', @q));
 SELECT @q = COUNT(*) FROM sys.database_principals WHERE name IN ('crmt_phc', 'crmt_svc');
 INSERT @r (teste, ok, detalhe) VALUES ('P5 rollback remove os utilizadores de teste', CASE WHEN @q = 0 THEN 1 ELSE 0 END, CONCAT('utilizadores=', @q));

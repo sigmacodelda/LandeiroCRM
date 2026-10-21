@@ -190,7 +190,8 @@ cliente:** precisa do runtime **`Microsoft.NETCore.App` 8.x** (ou publicar com `
 ## 9. Decisões já tomadas (do prompt)
 
 - Âmbito: só clientes e contactos nesta fase. Circuito genérico para FL e PE.
-- Eliminações: `SEM_ENVIO` + log, porque a API não as suporta.
+- Eliminações: a API não as suporta; o serviço envia o registo apagado como `Inativo` só com os códigos. Nunca enviado
+  (ou contacto sem código da conta) = `SEM_ENVIO` + log.
 - Carga: 1 a 1 (cliente 13444 primeiro); importação completa depois.
 - Retenção: só logs (7 dias por defeito). A fila guarda tudo. Erros: só reposição manual.
 - `code` da conta = `NO-ESTAB` (ex.: `13444-0`), para sede **e** estabelecimentos. Cada estabelecimento é uma conta própria.

@@ -60,7 +60,7 @@ BEGIN
         SELECT 'U_CLCONTACT', 'CONTACTO', 'CLI', k.u_clcontactstamp, RTRIM(k.u_clcontactstamp), 'U'
           FROM inserted AS i
           JOIN deleted AS d ON d.clstamp = i.clstamp
-          JOIN dbo.u_clcontact AS k ON k.clstamp = i.clstamp
+          JOIN dbo.u_clcontact AS k WITH (NOLOCK) ON k.clstamp = i.clstamp
          WHERE i.inactivo <> d.inactivo;
 
         -- Eliminação: fichas que estavam em deleted e já não estão em inserted

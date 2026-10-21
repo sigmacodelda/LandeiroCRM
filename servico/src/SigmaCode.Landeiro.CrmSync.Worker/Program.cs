@@ -9,6 +9,9 @@ using SigmaCode.Landeiro.CrmSync.Worker;
 
 var builder = Host.CreateApplicationBuilder(args);
 
+// Ficheiro local opcional, fora do git (appsettings.*.json está no .gitignore)
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: false);
+
 // Corre como Windows Service (e também na consola, para testes)
 builder.Services.AddWindowsService(o => o.ServiceName = "SigmaCode.Landeiro.CrmSync");
 
@@ -22,8 +25,12 @@ if (configErrors.Count > 0)
 string Resolve(string path) => Path.IsPathRooted(path) ? path : Path.Combine(AppContext.BaseDirectory, path);
 var logDirectory = Resolve(options.LogDirectory);
 
-// Credenciais: variáveis de ambiente ou DPAPI. Nunca em appsettings.
-var credentials = CredentialProvider.Load(string.IsNullOrWhiteSpace(options.CredentialsFile) ? null : Resolve(options.CredentialsFile));
+// Credenciais: variáveis de ambiente ou DPAPI. Em testes locais, a connection string pode vir de
+// appsettings.Local.json (ignorado pelo git; nunca no appsettings.json versionado). O token segue a mesma regra (Secrets:ApiToken).
+var credentials = CredentialProvider.Load(
+    string.IsNullOrWhiteSpace(options.CredentialsFile) ? null : Resolve(options.CredentialsFile),
+    builder.Configuration["ConnectionStrings:Crm"],
+    builder.Configuration["Secrets:ApiToken"]);
 
 builder.Services.AddSingleton(options);
 builder.Services.AddSingleton<IAuditLog>(_ => new DailyFileAuditLog(logDirectory));

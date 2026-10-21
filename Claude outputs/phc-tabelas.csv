@@ -1,0 +1,886 @@
+tabela,descricao,n_campos
+AC,Acessos a Campos para Mapas definidos por utilizadores,9
+ACL,Acessos a Campos para Mapas definidos por utilizadores (linhas),9
+AG,Entidades,125
+AGEC,Mapas/Processamentos das Sociedades em Tarefas Agendadas,11
+AGSTC,Artigos de Custo das Tarefas Agendadas,11
+AGT,Tarefas Agendadas,43
+AG_TIPO,Tipo de entidade,0
+AG_TRAT,Tipo de tratamento de entidade,0
+AL,Alertas do utilizador,113
+ALG,Algoritmos Inteligentes,25
+ALGJS,Tabela de justificações simples,8
+ALW,Alertas,62
+ALWCIUS,Alerta de importação CIUS-PT por e-mail,9
+ALWCOB,Importação via Bank Conenctor,11
+ALWLOG,Histórico de Alertas,9
+ALWNBANKS,Alerta para importar extratos das contas nBanks Web,12
+AMAFSPHIST,Resultado de comunicação de documentos via webservice à AMA FSP,16
+AMENU,Acessos especiais dos Utilizadores,6
+ANAMULTC,Configuração de Análises Multidimensionais-Cabeçalhos,6
+ANAMULTL,Configuração de Análises Multidimensionais-Linhas,12
+ANOSPC,Anos da Contabilidade,15
+APROV,Sistema de Aprovações,12
+ARF,Área Funcional,6
+ATCODRET,Resultado de comunicação de documentos via webservice à AT,17
+ATEMRCT,Ações de templates de recrutamento,17
+ATRIB,Atributos,7
+AVLEGAL,Aviso Legal,14
+AVS,Avisos,18
+A_AOCGRUPO,Grupos de tesouraria,0
+A_BEGRU,Grupos de Património,0
+A_BELOC,Localizações,0
+A_BEOBS,Observações de Património,0
+A_BERAMO,Ramos de Seguro,0
+A_BESUBG,Sub-Grupos de Património,0
+A_BETIPO,Tipo de Bens,0
+A_CASS,Tabela de Centros de Assistência,0
+A_CLTIPO,Tabela Tipos de cliente,0
+A_COBRA,Tabela de Cobradores,0
+A_CORESU,Tabela de Resumos de Visita para cobranças,0
+A_COTIPO,Tabela de Tipos de Visita para cobranças,0
+A_DPT,Tabela de Departamentos,0
+A_EXPS,Tabela de modos de expedição,0
+A_FLTIPO,Tabela de tipo de fornecedor,0
+A_NACINS,Tabela de nacionalidades,0
+A_PAGS,Tabela de modos de pagamento,0
+A_SEGS,Tabela de segmentos de mercado,0
+A_STDTIPO,Tipo de artigo para descontos,0
+A_STUSR1,Tabela de Stocks 1,0
+A_STUSR2,Tabela de Stocks 2,0
+A_STUSR3,Tabela de Stocks 3,0
+A_STUSR4,Tabela de Stocks 4,0
+A_STUSR5,Tabela de Stocks 5,0
+A_STUSR6,Tabela de Stocks 6,0
+A_TAB1001,Dossier 1 Tabela do utilizador 1,0
+A_TAB1002,Dossier 2 Tabela do utilizador 1,0
+A_TAB1003,Dossier 3 Tabela do utilizador 1,0
+A_TAB1004,Dossier 4 Tabela do utilizador 1,0
+A_TAB1005,Dossier 5 Tabela do utilizador 1,0
+A_TAB1006,Dossier 6 Tabela do utilizador 1,0
+A_TAB1007,Dossier 7 Tabela do utilizador 1,0
+A_TIPODESC,Tabela de Tipo para descontos,0
+A_TNTIPO,Tipo de chamada,0
+A_ZONAS,Zonas,0
+BA,Movimentos em Contas de Tesouraria,42
+BANCOS,Bancos,21
+BBO2,(Buffer) - Dossiers Internos - Outros Dados,172
+BBO3,(Buffer) - Dossiers Internos - Informação Complementar,58
+BC,Códigos de Barras,11
+BDC,(Buffer) - Documentos Pré-Definidos,41
+BDCLI,(Buffer) - Linhas de Documentos Predefinidos,24
+BDL,(Buffer) - Linhas de Despesas,39
+BDO,(Buffer) - Documentos Contabilísticos,78
+BDS,(Buffer) - Despesas,26
+BE,Ativos,234
+BEANA,Plano Analítico,9
+BECC,Distribuição de Ativos por Centro Analítico,8
+BEFRX,Mapas de Depreciações de Bens,20
+BEIC,Inventário Fisico de Ativos,12
+BEIL,Linhas de Inventário Fisico de Ativos,8
+BEM,(Buffer) - Contactos,156
+BENC,(Buffer) - Análises multidimensionais da Web,89
+BENCDI,(Buffer) - Dimensões das Análises multidimensionais da Web,14
+BENCME,(Buffer) - Medidas das Análises multidimensionais da Web,12
+BEUSQL,Análises Avançadas Web (buffer),234
+BEUSQLV,Variáveis de Análises Avançadas Web (buffer),13
+BE_CCUSTO,Centros de Custo de Património,0
+BFN,(Buffer) - Linhas de Compras,142
+BFO,(Buffer) - Compras,287
+BFO2,(Buffer) - Compras - Outros Dados,127
+BFOFC,(Buffer) Pagamentos de Documentos de Compra,46
+BFOMA,(buffer) Nºs Série em compras,37
+BFOPD,(Buffer) - Adiantamentos em compras,51
+BFOT,(Buffer) Totais dos documentos de compras,14
+BFP,(Buffer) - Ficheiro de Férias de Funcionários,38
+BG,Garantias Bancárias (Tesouraria),20
+BI,Linhas de Dossiers Internos,243
+BI2,Linhas de Dossiers Internos - Outros Dados,87
+BIPRECAT,Linhas de Pré-Cativos de Dossiers Internos,9
+BL,Contas de Tesouraria,84
+BLOG,Blogues,24
+BLOGC,Comentários de Blogues,22
+BLOGP,Artigos de Blogues,84
+BL_TIPO,Tipo de conta bancária,0
+BML,(Buffer) - Movimentos Contabilísticos,84
+BO,Dossiers Internos,282
+BO2,Dossiers Internos - Outros Dados,172
+BO3,Dossiers Internos - Informação Complementar,58
+BOAUTO,Configurações para Emissão Automática de Dossiers Internos,75
+BOMA,Nºs de série de dossiers,48
+BOT,Totais dos dossiers internos,11
+BOTXT,Diálogos das encomendas,15
+BOX,(Buffer) - Talões de Depósito,56
+BOY,(Buffer) - Linhas de Talões de Depósito,21
+BPE,(Buffer) - Funcionários,356
+BPE2,(Buffer) - Funcionários - Outros Dados,225
+BR,Movimentos Bancários Importados,46
+BRULE,Regras do utilizador,16
+BSC,(Buffer) - Artigos Compostos,19
+BSGC,(Buffer) - Grelhas dos artigos - cores,9
+BSGT,(Buffer) - Grelhas dos artigos - tamanhos,11
+BST,(Buffer) - Stocks e Serviços,203
+BSTIC,(Buffer) - Inventário Físico,31
+BSTIL,(Buffer) - Linhas do Inventário Físico,39
+BSX,(Buffer) - Informação de cor e tamanho,39
+BT,Ficheiro de Depreciações,94
+BV,Ficheiro de Reavaliações,62
+BVFRX,Mapas de Reavaliações de Bens,13
+BX,Extratos Bancários,33
+C9,Imputações de Contas,16
+CALFIS,Datas do Calendário Cegid PHC,19
+CALG,Casos de Algoritmos Inteligentes,25
+CAMPOS,Campos de tabelas,20
+CAVS,Configuração de avisos automáticos,15
+CAVSL,Linhas Sistema de Configuração de Avisos por utilizador,17
+CB,Taxas de conversão para o Euro,27
+CBB,Cobranças via Banco,48
+CBBL,Movimentos de Cobranças via Banco,55
+CBDC,Canais de Broadcast,16
+CBPAISES,Moedas e Câmbios,9
+CC,C/Correntes Clientes e Entidades,174
+CCE,Configuração de contas de Email,36
+CCFC,Ficheiro de Encontros de Contas,32
+CCFCL,Linhas do Ficheiro de Encontros de Contas,40
+CCT,Centros de Custo Geral,6
+CE,Fórmulas dos Mapas de Gestão,64
+CECOPE,Códigos de Classificação Estatística,12
+CEVAR,Variáveis para Fórmulas dos Mapas de Gestão,12
+CF,Coeficientes Anuais,8
+CFCONFB,Categorias Coverflex,19
+CFG,Configuração para cadastro de registos,9
+CFGLOG,Cadastro de registos,10
+CFGM,Configuração de Menus,13
+CFHIST,Movimentos Coverflex,44
+CFI,Configuração de colunas a integrar na contabilidade,8
+CFUSERPER,Configurações Avançadas para Integração com a Coverflex,7
+CH,Tabela de títulos de Tesouraria,69
+CHAMADAS,Chamadas Telefónicas a Entrar,7
+CHC,Chats - Conversas,16
+CHF,Títulos emitidos,56
+CHFL,Movimentos de Títulos emitidos,17
+CHL,Linhas de Títulos de Tesouraria,45
+CHS,Chats - Salas,42
+CHU,Chats - utilizadores,15
+CI,Imputações de Centros de Custo,16
+CIB,Conteúdos Implementation Boost,15
+CIE,Integração de Dados,37
+CIS,Códigos de Imposto de Selo,17
+CL,Clientes,246
+CL2,Clientes - Outros Dados,72
+CLINT,Intervalos de Saldos de Cliente,8
+CLW,Custos Extra da Loja,14
+CLWL,Custos Extra da Loja - Linhas,9
+CM,Correções Monetárias,9
+CM1,Códigos de movimentos de c/c,94
+CM2,Códigos de movimentos de stocks,10
+CM3,Vendedores,29
+CM6,Tabela de Códigos para Vencimentos,111
+CNCT,Conceitos de Contabilidade para Mapas,12
+CNEC,Gestão de necessidades e conteúdos Implementation Boost,7
+CNECE,Conteúdos de Necessidades Específicas,23
+CO,Cobranças a Clientes,26
+COB,Configuração de contas bancárias,21
+COBH,Histórico de autenticações no banco,10
+COBI,Contas do banco,10
+CODESC,Mnemónicas de Códigos de ESC,0
+CODLOG,Log de Código de Utilizador,29
+CODRET,Códigos de Retorno PS2,8
+COL,Gestão de cobranças (linhas cc),19
+COMUNICAUS,Comunicação com o Utilizador,25
+COPE,Comunicação de Operações e Posições com o Exterior,13
+COPEL,Linhas de Comunicação de Operações e Posições com o Exterior,28
+COPELD,Documentos de Linhas de Comunicação de Operações e Posições com o Exterior,31
+CPICAI,Perdas em Créditos/Ajustamentos em Inventários,21
+CPOC,Códigos de Integração de Vendas,199
+CPOO,Códigos de Integração de Compras,201
+CPOO2,Códigos de Integração de Compras - Outros Dados,31
+CPSL,Códigos de Interligação de Stocks,11
+CP_1,Códigos postais (freguesias),0
+CP_2,Códigos postais (freguesias partilhadas),0
+CP_3,Códigos postais,17
+CR,Correspondência,42
+CRVAL,Tabela de critérios de validação,14
+CRVALI,Linhas dos critérios de validação,18
+CTX,Contextos de Dados,12
+CU,Centros de Custo da Contabilidade,8
+DC,Documentos predefinidos,41
+DCLI,"Documentos predefinidos , linhas",22
+DFCL,Descontos por Artigo / Cliente,13
+DFFL,Descontos por Familia / Fornecedor,12
+DFFO,Descontos por Artigo / Fornecedor,13
+DI,Diários,35
+DIM,Dimensões,8
+DISP,Dispositivos,13
+DISPACCESS,Gestão de dispositivos,7
+DO,Documentos Contabilisticos,77
+DQ,Descontos por Quantidade / Valor,19
+DSEGIP,IPs a Negar Autorizações PHC CS Web e GO,5
+DSTAXASIVA,Taxas de iva de despesas,10
+DTL,Ligações entre Tabelas do Dicionário de dados,9
+DYTABLE,Tabelas Auxiliares,6
+E1,Ficha completa da Empresa,245
+E1CA,Variáveis Cabeçalho,7
+E1LI,Variáveis Linhas,9
+E2,Dados Contabilísticos da Empresa,13
+E3,Dados da Empresa para o Balanço Social/Relatório Único,161
+E4,Tabela e-GAR associada ao estabelecimento,28
+EAP,Apresentações,18
+EAPL,Passos de Apresentações,20
+EBI,(Buffer) - Linhas de Dossiers Internos,247
+EBI2,(Buffer) - Linhas de Dossiers Internos - Outros Dados,88
+EBIPRECAT,(Buffer) - Linhas de Pre-Cativos de Dossiers Internos,10
+EBK,Apontamentos Pessoais,12
+EBN,Banners,45
+EBO,(Buffer) - Dossiers Internos,282
+EBOMA,(buffer) - Nºs Série Dossiers Internos,51
+EBOT,(Buffer) Totais dos dossiers internos,12
+EBRULE,Regras Web,33
+EC,Sociedades,48
+ECA,Configuração dos Destinatários,87
+ECAM,Campos Internos,46
+ECGS,Utilizadores das Sociedades,9
+ECI,Configuração de Inquéritos,220
+ECI2,Configuração de Inquéritos - outros dados,103
+ECIG,Grupos de Configuração de Inquéritos,7
+ECL,Sociedades Participantes,10
+ECLAJ,Ajustamentos das Sociedades,9
+ECOM,Tabela de Comissões,62
+ECS,Configuração de Assinaturas para Web,11
+ECTS,(Buffer) - Pessoas,34
+EDA,Dashboard,35
+EDAO,Objetos de Dashboard,21
+EDAV,Variáveis de Dashboards,13
+EDF,Preferências do Utilizador,11
+EDIHISTCOM,Histórico da comunicação dos Documentos eletrónicos,18
+EDO,Documentos Partilhados,45
+EEM,Contactos Extranet,36
+EEVENTOS,Eventos Web,60
+EFAQ,Perguntas Frequentes,54
+EFAQF,Links Perguntas Frequentes,8
+EFATBACKUP,Histórico de importações efatura,19
+EFEU,Filtros do utilizador Web,12
+EFI,(Buffer) - Linhas de Documentos de Faturação,227
+EFI2,(Buffer) - Linhas de Documentos de Faturação - Outros Dados,34
+EFK,Historial,9
+EFO,Forum,24
+EFT,(Buffer) - Documentos de Faturação,392
+EFT2,Documentos de Faturação - Outros Dados (buffer),250
+EFT3,Documentos de Faturação - Informação complementar (buffer),209
+EFTCC,Pagamentos de Documentos de Faturação (buffer),48
+EFTMA,(buffer) - Nºs Série em documentos de faturação,33
+EFTRD,(Buffer) - Regularizações em Documentos de Faturação,61
+EFTT,(Buffer) - Totais dos Documentos de Faturação,14
+EFU,Ecrãs Web,54
+EFV,Favoritos Pessoais,19
+EGA,Galeria,58
+EHT,Hits a Páginas Web,19
+ELC,Licitações de Leilões,17
+ELE,Leilões,34
+ELG,Pedidos de Ligação do Portal,16
+ELK,Links do Portal,50
+EME,Opções de Menu,41
+EMO,Monitores,44
+EMOI,Itens de Monitores,51
+EMOV,Variáveis de Itens de Monitores,11
+EMU,Multimedia,77
+EMUC,Comentários Multimedia,21
+EMUF,Links Multimedia,7
+EMV,Variáveis de Monitores,10
+ENC,Análises multidimensionais da Web,89
+ENCDI,Dimensões das Análises multidimensionais da Web,14
+ENCME,Medidas das Análises multidimensionais da Web,12
+ENL,eNewsLetters,41
+ENLC,eNewsLetters (controlo),6
+ENU,Numeradores do utilizador,32
+EOW,(Buffer) - Documentos de Tesouraria,90
+EOWLI,(Buffer) - Linhas de Documentos de tesouraria,28
+EPAGC,Objetos de Ecrã,69
+EPAGCTAB,Objetos de Ecrã - Colunas de tabela,15
+EPJ,Projetos Extranet,12
+EPL,(Buffer) - Linhas de Pagamentos,121
+EPO,(Buffer) - Pagamentos,186
+EPOT,(Buffer) - Totais de Pagamentos,20
+EPS,Press Release,15
+EPTX,Ajuda do Pack Web,29
+ERE,(Buffer) - Recibos de c/c,274
+ERECH,(Buffer) - Títulos de c/c,20
+EREG,Regras Internas,19
+ERET,(Buffer) - Totais de Recibos de c/c,22
+ERI,Resultados de Inquéritos,59
+ERL,(Buffer) - Linhas de Recibos de c/c,125
+ERSS,RSS do utilizador,35
+ESB,Subscrições de eNewsletters,32
+ESCCL,Contratos de Rappel a Clientes (escalões),15
+ESCR,Scripts Web,15
+ESPAPHIST,Resultado de comunicação de documentos eletrónicos,17
+EST,Catálogo de Produtos,18
+ESTLI,Imagens do Catálogo de Produtos,17
+ETL,Opções de Ecrãs,54
+ETP,Tarefas Pessoais,30
+ETPB,Templates Básicos,12
+ETPL,Templates de Tabela,40
+EUDEFS,Valores por defeito Web,49
+EUSQL,Análises Avançadas Web,234
+EUSQLSNAPV,Variáveis de Snapshots Web,13
+EUSQLV,Variáveis de Análises Avançadas Web,12
+EV,Apuramento de CMV,11
+EVENTOS,Eventos,62
+EWK,Wikis,9
+EWKV,Votos em Wikis,6
+EWP,Páginas Internet,61
+EXEV,Últimas Versões,21
+EXFT,Configuração de Faturação Personalizada Web,7
+EXPLORADOR,Explorador de dados,14
+EXPLORADORCMP,Campos de cálculo do explorador de dados,10
+EXPLORADORFIL,Linhas de filtro do explorador de dados,39
+EXPLORADORGRP,Linhas de agrupamento do explorador de dados,11
+EXPLORADORORD,Linhas de ordenação do explorador de dados,12
+EXPLORADORTOT,Linhas de totalizadores do explorador de dados,12
+FAC,Contratos de Factoring,55
+FACA,Adiantamentos de Contratos de Factoring,42
+FACALI,Detalhe dos adiantamentos de Contratos de Factoring,14
+FACC,Cessões de Crédito,68
+FACD,Devoluções de Cessões de Crédito,45
+FACDL,Linhas de Devoluções de Cessões de Crédito,37
+FACL,Linhas das Cessões de Crédito,37
+FACP,Plano Pagamentos das Cessões de Crédito,22
+FAL,Linhas dos Contratos de Factoring,16
+FAMEM,Membros da Comunidade,26
+FAMLI,Livro da Comunidade,14
+FAMNW,Noticias da Comunidade,28
+FAMPA,Páginas da Comunidade,10
+FAMRE,Reportagens da Comunidade,15
+FAQF,Ficheiros das Perguntas Frequentes,18
+FASC,Configuração de Ficheiros,21
+FASCL,Campos de ficheiros ASCII,14
+FC,Contas Correntes de Fornecedores,141
+FE,Fechos de caixa,15
+FEU,Filtros de Utilizador,10
+FF,Tabela de Feriados,29
+FI,Linhas de Documentos de Faturação,224
+FI2,Linhas de Documentos de Faturação - Outros Dados,33
+FIVA,Formulas do plano de IVA,17
+FL,Fornecedores,164
+FLCM1,Serie associada ao Fornecedor/Cliente,15
+FLI,Filtros do Web (Linhas),17
+FLINT,Intervalos de Saldos de Fornecedor,8
+FLST,Referências por fornecedor,9
+FLT,Filtros do Web,13
+FLTAG,Ficheiro de filtro de Entidades,0
+FLTBA,Ficheiro de filtro de Movimentos em Contas de Tesouraria,0
+FLTBC,Ficheiro de filtro de Códigos de Barras,0
+FLTBE,Ficheiro de filtro de Bens,0
+FLTBEANA,Ficheiro de filtro de Plano Analítico,0
+FLTBI,Ficheiro de filtro de Linhas de Dossiers Internos,0
+FLTBL,Ficheiro de filtro de Contas Bancárias,0
+FLTBO,Ficheiro de filtro de Dossiers Internos,0
+FLTBR,Ficheiro de filtro de Movimentos Bancários Importados,0
+FLTBRULE,Ficheiro de filtro de Regras do utilizador,0
+FLTBT,Ficheiro de filtro de Ficheiro de Reintegrações,0
+FLTBV,Ficheiro de filtro de Ficheiro de Reavaliações,0
+FLTBX,Ficheiro de filtro de Extractos Bancários,0
+FLTC9,Ficheiro de filtro de Imputações de Contas,0
+FLTCAMPOS,Ficheiro de filtro de Campos de tabelas,0
+FLTCB,Ficheiro de filtro de Tabela de Câmbios,0
+FLTCC,Ficheiro de filtro de C/Correntes Clientes e Entidades,0
+FLTCF,Ficheiro de filtro de Coeficientes Anuais,0
+FLTCH,Ficheiro de filtro de Cheques,0
+FLTCI,Ficheiro de filtro de Imputações de Centros de Custo,0
+FLTCL,Ficheiro de filtro de Clientes,0
+FLTCM2,Ficheiro de filtro de Códigos de movimentos de stocks,0
+FLTCM3,Ficheiro de filtro de Vendedores,0
+FLTCO,Ficheiro de filtro de Cobranças a Clientes,0
+FLTCPOC,Ficheiro de filtro de Códigos de Integração de Vendas,0
+FLTCPOO,Ficheiro de filtro de Códigos de Integração de Compras,0
+FLTCPSL,Ficheiro de filtro de Códigos de Interligação de Stocks,0
+FLTCR,Ficheiro de filtro de Correspondência,0
+FLTCU,Ficheiro de filtro de Centros de Custo da Contabilidade,0
+FLTDC,Ficheiro de filtro de Documentos pré-definidos,0
+FLTDFCL,Ficheiro de filtro de Descontos por Artigo / Cliente,0
+FLTDFFL,Ficheiro de filtro de Descontos por Familia / Fornecedor,0
+FLTDI,Ficheiro de filtro de Diários,0
+FLTDO,Ficheiro de filtro de Documentos Contabilisticos,0
+FLTE1,Ficheiro de filtro de Ficha completa da Empresa,0
+FLTE3,Ficheiro de filtro de Dados da Empresa para o Balanço Social,0
+FLTECOM,Ficheiro de filtro de Tabela de Comissões,0
+FLTEVENTOS,Ficheiro de filtro de Eventos,0
+FLTFASC,Ficheiro de filtro de Configuração de Ficheiros,0
+FLTFC,Ficheiro de filtro de Contas Correntes de Fornecedores,0
+FLTFI,Ficheiro de filtro de Linhas de Documentos de Facturação,0
+FLTFL,Ficheiro de filtro de Fornecedores,0
+FLTFN,Ficheiro de filtro de Linhas de Compras a Fornecedores,0
+FLTFO,Ficheiro de filtro de Compras a Fornecedores,0
+FLTFT,Ficheiro de filtro de Documentos de Facturação,0
+FLTIV,Ficheiro de filtro de Códigos de IVA,0
+FLTJT,Ficheiro de filtro de Ajustes Fiscais,0
+FLTLS,Ficheiro de filtro de Plano Financeiro,0
+FLTLT,Ficheiro de filtro de Ligações entre tabelas,0
+FLTLTLI,Ficheiro de filtro de Linhas de Ligações entre tabelas,0
+FLTLV,Ficheiro de filtro de Tabela de Lojas,0
+FLTMA,Ficheiro de filtro de Equipamentos,0
+FLTMC,Ficheiro de filtro de Contabilidade Orçamental,0
+FLTMG,Ficheiro de filtro de Mensagens inter-utilizadores,0
+FLTML,Ficheiro de filtro de Movimentos Contabilisticos,0
+FLTNC,Ficheiro de filtro de Análises multi-dimensionais,0
+FLTOC,Ficheiro de filtro de Códigos de Tesouraria,0
+FLTOD,Ficheiro de filtro de Previsões de Tesouraria,0
+FLTOL,Ficheiro de filtro de Movimentos de tesouraria,0
+FLTOLBB,Ficheiro de filtro de Trf. Conta-Conta,0
+FLTOLBC,Ficheiro de filtro de Trf. Conta-Caixa,0
+FLTOM,Ficheiro de filtro de Movimentos Constantes de Tesouraria,0
+FLTOP,Ficheiro de filtro de Orçamento de Tesouraria,0
+FLTOW,Ficheiro de filtro de Documentos de tesouraria,0
+FLTOX,Ficheiro de filtro de Talões de Depósito,0
+FLTOY,Ficheiro de filtro de Linhas de Talões de Depósitos,0
+FLTPC,Ficheiro de filtro de Plano de Contas,0
+FLTPD,Ficheiro de filtro de Adiantamentos a Fornecedores,0
+FLTPL,Ficheiro de filtro de Linhas de Pagamentos a Fornecedores,0
+FLTPN,Ficheiro de filtro de Produtos vendidos,0
+FLTPO,Ficheiro de filtro de Pagamentos a Fornecedores,0
+FLTPRNC,Ficheiro de filtro de Configurações de Impressora,0
+FLTRD,Ficheiro de filtro de Recibos de adiantamentos,0
+FLTRE,Ficheiro de filtro de Recibos para Clientes,0
+FLTRL,Ficheiro de filtro de Linhas de Recibos para Clientes,0
+FLTRPCL,Ficheiro de filtro de Contratos de Rappel a Clientes,0
+FLTRPFL,Ficheiro de filtro de Contratos de Rappel a Fornecedores,0
+FLTRS,Ficheiro de filtro de Apuramento de Resultados,0
+FLTRT,Ficheiro de filtro de Artigos Alternativos,0
+FLTRV,Ficheiro de filtro de Apuramento de IVA,0
+FLTSC,Ficheiro de filtro de Artigos Compostos,0
+FLTSE,Ficheiro de filtro de Lotes,0
+FLTSL,Ficheiro de filtro de Movimentos de Stock,0
+FLTSP,Ficheiro de filtro de Promoções,0
+FLTST,Ficheiro de filtro de Stocks e Serviços,0
+FLTSTFAMI,Ficheiro de filtro de Famílias de Artigos,0
+FLTSTIC,Ficheiro de filtro de Inventário Fisico,0
+FLTSTIL,Ficheiro de filtro de Linhas de Inventário Fisico,0
+FLTSV,Ficheiro de filtro de Movimentos de Valor em Stock,0
+FLTSX,Ficheiro de filtro de Informação por côr e tamanho,0
+FLTSZ,Ficheiro de filtro de Nomes de Armazéns,0
+FLTTC,Ficheiro de filtro de Teclas do utilizador,0
+FLTTD,Ficheiro de filtro de Configuração de Documentos de Facturação,0
+FLTTI,Ficheiro de filtro de Teclas do utilizador (linhas),0
+FLTTL,Ficheiro de filtro de Decretos Lei de Reavaliações,0
+FLTTN,Ficheiro de filtro de Chamadas telefónicas,0
+FLTTP,Ficheiro de filtro de Condições de Pagamento,0
+FLTTR,Ficheiro de filtro de Textos rápidos para campos de texto (memo),0
+FLTTS,Ficheiro de filtro de Configuração de Dossiers Internos,0
+FLTTSRD,Ficheiro de filtro de Configuração de Recibos de adiantamento para Cli,0
+FLTTSRE,Ficheiro de filtro de Configuração de Recibos de c/c para Clientes,0
+FLTTZ,Ficheiro de filtro de Códigos de Amortização,0
+FLTUDEFS,Ficheiro de filtro de Valores por defeito,0
+FLTUG,Ficheiro de filtro de Grupos de Utilizadores,0
+FLTUS,Ficheiro de filtro de Utilizadores,0
+FLTUSQL,Ficheiro de filtro de Análises do utilizador,0
+FLTVL,Ficheiro de filtro de Linhas de Pagamentos a Vendedores,0
+FLTVY,Ficheiro de filtro de C/Correntes Vendedores,0
+FLTVZ,Ficheiro de filtro de Pagamentos a Vendedores,0
+FN,Linhas de Compras a Fornecedores,140
+FO,Compras a Fornecedores,288
+FO2,Compras a Fornecedores - Outros Dados,127
+FOFC,Pagamentos de Documentos de Compra,44
+FOMA,Nºs de série de docs. compra,34
+FOPD,Adiantamentos de Documentos de Compra,50
+FORMASPAGAMENTO,Formas de Pagamento,10
+FORMB,Ecrãs Personalizados,20
+FORMC,Ecrãs Personalizados (Linhas),22
+FOT,Totais dos documentos de compras,13
+FPAGA,Custo da forma de pagamento da Loja,14
+FPAGAL,Custo da forma de pagamento da Loja - Linhas,8
+FREF,Referência Interna,7
+FT,Documentos de Faturação,392
+FT2,Documentos de Faturação - Outros Dados,250
+FT3,Documentos de Faturação - Informação complementar,209
+FTCC,Pagamentos de Documentos de Faturação,46
+FTMA,Nºs de série de docs. faturação,30
+FTRD,Regularização de Documentos de Faturação,59
+FTREG,Regularizações de Documentos de Faturação,8
+FTT,Totais dos documentos de faturação,13
+FTU,Funções TSQL do Utilizador,8
+FXBASE,Procedimentos do utilizador em XBASE,10
+FXU,Funções de utilizador,7
+GAEC,Grupos de Acessos Externos (Cabeçalhos),5
+GAED,Grupos de Acessos Externos (Acesso Web),6
+GAEL,Grupos de Acessos Externos (Linhas),8
+GAELN,Grupos de Acessos Externos (Linhas 2),13
+GESTEXP,Exportações de Documentos,13
+GMENU,Acessos dos Grupos de Utilizadores,5
+GPNAV,Grupos de Opções de Navegação e SnapShots,9
+GSEC,Grupos de Sincronização Externos (Cabeçalhos),5
+GSEL,Grupos de Sincronização Externos (Linhas),7
+GSELN,Grupos de Sincronização Externos (Linhas 2),24
+GT,Grelha de Transição,18
+GTXT,Comentários,17
+HCODRET,Histórico de Códigos de Retorno,15
+HISTAVLEGAL,Histórico de aceitação do Aviso Legal,20
+HISTEFATURA,Histórico de importação e-fatura,28
+HISTEFATURAL,Linhas do histórico de importação e-fatura,11
+HISTMG,Histórico de mapas de gestão,16
+HISTPHCATUAL,Histórico das atualizações Settings Update,21
+HISTRU,Histórico das comunicações do Relatório Único,18
+HISTSSF,Histórico das comunicações com a SS Direta,30
+HSEPACRET,Histórico de Códigos de Retorno SEPA,16
+IFL,Imagens e outros ficheiros internos,15
+IL,Linhas Imputações de Centros de Custo,7
+IMP,Imparidade,36
+INQ,Formulários Dinâmicos,15
+INQL,Questões de Formulários Dinâmicos,11
+INTRE,Reportagens da Intranet,15
+INTU,Instruções Internas,24
+IV,Códigos de IVA,9
+JS,Ligações entre ecrãs (Cabeçalhos),31
+JSC,Ligações entre ecrãs (Linhas - Campos),9
+JSL,Ligações entre ecrãs (Linhas - Listagem),11
+JSU,Javascript de utilizador,27
+JT,Ajustes Fiscais,11
+L9,Linhas de Imputações de Contas,7
+LE,Regularizações de Títulos de Dívida a Receber,72
+LG,Regularizações de Títulos de Dívida a Pagar,71
+LI,"Regularizações de Títulos de Dívida a Receber, linhas",29
+LIFLTAG,Ficheiro de linhas de filtro de Entidades,0
+LIFLTBA,Ficheiro de linhas de filtro de Movimentos em Contas de Tesouraria,0
+LIFLTBC,Ficheiro de linhas de filtro de Códigos de Barras,0
+LIFLTBE,Ficheiro de linhas de filtro de Bens,0
+LIFLTBEANA,Ficheiro de linhas de filtro de Plano Analítico,0
+LIFLTBI,Ficheiro de linhas de filtro de Linhas de Dossiers Internos,0
+LIFLTBL,Ficheiro de linhas de filtro de Contas Bancárias,0
+LIFLTBO,Ficheiro de linhas de filtro de Dossiers Internos,0
+LIFLTBR,Ficheiro de linhas de filtro de Movimentos Bancários Importados,0
+LIFLTBRULE,Ficheiro de linhas de filtro de Regras do utilizador,0
+LIFLTBT,Ficheiro de linhas de filtro de Ficheiro de Reintegrações,0
+LIFLTBV,Ficheiro de linhas de filtro de Ficheiro de Reavaliações,0
+LIFLTBX,Ficheiro de linhas de filtro de Extractos Bancários,0
+LIFLTC9,Ficheiro de linhas de filtro de Imputações de Contas,0
+LIFLTCAMPOS,Ficheiro de linhas de filtro de Campos de tabelas,0
+LIFLTCB,Ficheiro de linhas de filtro de Tabela de Câmbios,0
+LIFLTCC,Ficheiro de linhas de filtro de C/Correntes Clientes e Entidades,0
+LIFLTCF,Ficheiro de linhas de filtro de Coeficientes Anuais,0
+LIFLTCH,Ficheiro de linhas de filtro de Cheques,0
+LIFLTCI,Ficheiro de linhas de filtro de Imputações de Centros de Custo,0
+LIFLTCL,Ficheiro de linhas de filtro de Clientes,0
+LIFLTCM2,Ficheiro de linhas de filtro de Códigos de movimentos de stocks,0
+LIFLTCM3,Ficheiro de linhas de filtro de Vendedores,0
+LIFLTCO,Ficheiro de linhas de filtro de Cobranças a Clientes,0
+LIFLTCPOC,Ficheiro de linhas de filtro de Códigos de Integração de Vendas,0
+LIFLTCPOO,Ficheiro de linhas de filtro de Códigos de Integração de Compras,0
+LIFLTCPSL,Ficheiro de linhas de filtro de Códigos de Interligação de Stocks,0
+LIFLTCR,Ficheiro de linhas de filtro de Correspondência,0
+LIFLTCU,Ficheiro de linhas de filtro de Centros de Custo da Contabilidade,0
+LIFLTDC,Ficheiro de linhas de filtro de Documentos pré-definidos,0
+LIFLTDFCL,Ficheiro de linhas de filtro de Descontos por Artigo / Cliente,0
+LIFLTDFFL,Ficheiro de linhas de filtro de Descontos por Familia / Fornecedor,0
+LIFLTDI,Ficheiro de linhas de filtro de Diários,0
+LIFLTDO,Ficheiro de linhas de filtro de Documentos Contabilisticos,0
+LIFLTE1,Ficheiro de linhas de filtro de Ficha completa da Empresa,0
+LIFLTE3,Ficheiro de linhas de filtro de Dados da Empresa para o Balanço Social,0
+LIFLTECOM,Ficheiro de linhas de filtro de Tabela de Comissões,0
+LIFLTEVENTOS,Ficheiro de linhas de filtro de Eventos,0
+LIFLTFASC,Ficheiro de linhas de filtro de Configuração de Ficheiros,0
+LIFLTFC,Ficheiro de linhas de filtro de Contas Correntes de Fornecedores,0
+LIFLTFI,Ficheiro de linhas de filtro de Linhas de Documentos de Facturação,0
+LIFLTFL,Ficheiro de linhas de filtro de Fornecedores,0
+LIFLTFN,Ficheiro de linhas de filtro de Linhas de Compras a Fornecedores,0
+LIFLTFO,Ficheiro de linhas de filtro de Compras a Fornecedores,0
+LIFLTFT,Ficheiro de linhas de filtro de Documentos de Facturação,0
+LIFLTIV,Ficheiro de linhas de filtro de Códigos de IVA,0
+LIFLTJT,Ficheiro de linhas de filtro de Ajustes Fiscais,0
+LIFLTLS,Ficheiro de linhas de filtro de Plano Financeiro,0
+LIFLTLT,Ficheiro de linhas de filtro de Ligações entre tabelas,0
+LIFLTLTLI,Ficheiro de linhas de filtro de Linhas de Ligações entre tabelas,0
+LIFLTLV,Ficheiro de linhas de filtro de Tabela de Lojas,0
+LIFLTMA,Ficheiro de linhas de filtro de Equipamentos,0
+LIFLTMC,Ficheiro de linhas de filtro de Contabilidade Orçamental,0
+LIFLTMG,Ficheiro de linhas de filtro de Mensagens inter-utilizadores,0
+LIFLTML,Ficheiro de linhas de filtro de Movimentos Contabilisticos,0
+LIFLTNC,Ficheiro de linhas de filtro de Análises multi-dimensionais,0
+LIFLTOC,Ficheiro de linhas de filtro de Códigos de Tesouraria,0
+LIFLTOD,Ficheiro de linhas de filtro de Previsões de Tesouraria,0
+LIFLTOL,Ficheiro de linhas de filtro de Movimentos de tesouraria,0
+LIFLTOLBB,Ficheiro de linhas de filtro de Trf. Conta-Conta,0
+LIFLTOLBC,Ficheiro de linhas de filtro de Trf. Conta-Caixa,0
+LIFLTOM,Ficheiro de linhas de filtro de Movimentos Constantes de Tesouraria,0
+LIFLTOP,Ficheiro de linhas de filtro de Orçamento de Tesouraria,0
+LIFLTOW,Ficheiro de linhas de filtro de Documentos de tesouraria,0
+LIFLTOX,Ficheiro de linhas de filtro de Talões de Depósito,0
+LIFLTOY,Ficheiro de linhas de filtro de Linhas de Talões de Depósitos,0
+LIFLTPC,Ficheiro de linhas de filtro de Plano de Contas,0
+LIFLTPD,Ficheiro de linhas de filtro de Adiantamentos a Fornecedores,0
+LIFLTPL,Ficheiro de linhas de filtro de Linhas de Pagamentos a Fornecedores,0
+LIFLTPN,Ficheiro de linhas de filtro de Produtos vendidos,0
+LIFLTPO,Ficheiro de linhas de filtro de Pagamentos a Fornecedores,0
+LIFLTPRNC,Ficheiro de linhas de filtro de Configurações de Impressora,0
+LIFLTRD,Ficheiro de linhas de filtro de Recibos de adiantamentos,0
+LIFLTRE,Ficheiro de linhas de filtro de Recibos para Clientes,0
+LIFLTRL,Ficheiro de linhas de filtro de Linhas de Recibos para Clientes,0
+LIFLTRPCL,Ficheiro de linhas de filtro de Contratos de Rappel a Clientes,0
+LIFLTRPFL,Ficheiro de linhas de filtro de Contratos de Rappel a Fornecedores,0
+LIFLTRS,Ficheiro de linhas de filtro de Apuramento de Resultados,0
+LIFLTRT,Ficheiro de linhas de filtro de Artigos Alternativos,0
+LIFLTRV,Ficheiro de linhas de filtro de Apuramento de IVA,0
+LIFLTSC,Ficheiro de linhas de filtro de Artigos Compostos,0
+LIFLTSE,Ficheiro de linhas de filtro de Lotes,0
+LIFLTSL,Ficheiro de linhas de filtro de Movimentos de Stock,0
+LIFLTSP,Ficheiro de linhas de filtro de Promoções,0
+LIFLTST,Ficheiro de linhas de filtro de Stocks e Serviços,0
+LIFLTSTFAMI,Ficheiro de linhas de filtro de Famílias de Artigos,0
+LIFLTSTIC,Ficheiro de linhas de filtro de Inventário Fisico,0
+LIFLTSTIL,Ficheiro de linhas de filtro de Linhas de Inventário Fisico,0
+LIFLTSV,Ficheiro de linhas de filtro de Movimentos de Valor em Stock,0
+LIFLTSX,Ficheiro de linhas de filtro de Informação por côr e tamanho,0
+LIFLTSZ,Ficheiro de linhas de filtro de Nomes de Armazéns,0
+LIFLTTC,Ficheiro de linhas de filtro de Teclas do utilizador,0
+LIFLTTD,Ficheiro de linhas de filtro de Configuração de Documentos de Facturaç,0
+LIFLTTI,Ficheiro de linhas de filtro de Teclas do utilizador (linhas),0
+LIFLTTL,Ficheiro de linhas de filtro de Decretos Lei de Reavaliações,0
+LIFLTTN,Ficheiro de linhas de filtro de Chamadas telefónicas,0
+LIFLTTP,Ficheiro de linhas de filtro de Condições de Pagamento,0
+LIFLTTR,Ficheiro de linhas de filtro de Textos rápidos para campos de texto (m,0
+LIFLTTS,Ficheiro de linhas de filtro de Configuração de Dossiers Internos,0
+LIFLTTSRD,Ficheiro de linhas de filtro de Configuração de Recibos de adiantament,0
+LIFLTTSRE,Ficheiro de linhas de filtro de Configuração de Recibos de c/c para Cl,0
+LIFLTTZ,Ficheiro de linhas de filtro de Códigos de Amortização,0
+LIFLTUDEFS,Ficheiro de linhas de filtro de Valores por defeito,0
+LIFLTUG,Ficheiro de linhas de filtro de Grupos de Utilizadores,0
+LIFLTUS,Ficheiro de linhas de filtro de Utilizadores,0
+LIFLTUSQL,Ficheiro de linhas de filtro de Análises do utilizador,0
+LIFLTVL,Ficheiro de linhas de filtro de Linhas de Pagamentos a Vendedores,0
+LIFLTVY,Ficheiro de linhas de filtro de C/Correntes Vendedores,0
+LIFLTVZ,Ficheiro de linhas de filtro de Pagamentos a Vendedores,0
+LL,"Regularizações de Títulos de Dívida a Pagar,linhas",29
+LM,"Títulos de Dívida a Receber, linhas",56
+LO,"Títulos de Dívida a Pagar,linhas",43
+LOGERR,Log de Erros Internos,34
+LOGS,Log de Erros,16
+LOJAPAY,Pagamentos online via Geral,31
+LP,Títulos de Dívida a Pagar,105
+LPD,Lei de proteção de dados,6
+LPICAI,Movimentos Perdas em Créditos/Ajustamentos em Inventários,34
+LR,Títulos de Dívida a Receber,105
+LS,Plano Financeiro,22
+LT,Ligações entre tabelas,11
+LTLI,Linhas de Ligações entre tabelas,40
+LV,Tabela de Lojas,36
+MA,Equipamentos,159
+MAIL,Assistente de Email e SMS,28
+MAPAS,Mapas de Ativos,7
+MC,Contabilidade Orçamental,29
+MCA,Movimentos Contabilísticos do Ano Anterior,75
+MEC,Mapas das Sociedades,16
+MG,Mensagens inter-utilizadores,41
+MGDISK,"Mapas Gestão em Suporte Informático, Cabeçalhos",28
+MGDISKL,"Mapas Gestão em Suporte Informático, Linhas",67
+MGE1CFG,"Mapas de Gestão, Configuração",11
+MGE1CFGS,"Mapas de Gestão, Configuração das Secções",8
+MISEIMP,Motivos de Isenção de Imposto,18
+ML,Movimentos Contabilisticos,81
+MOD,Tabela Obrigações Declarativas para Monitor,26
+MODCONTRATOSS,Modalidades de contrato para a S.S. Direta,11
+MODWEB,Opções para Obrigações Periódicas,18
+MONTAB,Tabelas para monitor,47
+MONTABV,Variáveis de Tabelas para monitor,24
+MPT,Tabela de Mapeamento,9
+MSERIESREG,Séries de registos criadas via Multiplicador,25
+MVINC,Imparidades prazos de mora,8
+MX,Marcações,46
+MXAC,Acessos a agenda pessoal,7
+MXAREA,Áreas das marcações,7
+MXDV,Áreas de Marcações,14
+MXUS,Utilizadores de marcações,7
+NABDR,Notas às Demonstrações Financeiras,10
+NABDRL,Linhas das Notas às Demonstrações Financeiras,15
+NC,Análises multidimensionais,78
+NCDI,Análises multidimensionais - dimensões,12
+NCME,Análises multidimensionais - medidas,10
+NCT,Naturezas (Geral),6
+NEC,Necessidades,14
+NECC,Linhas Necessidades Conteúdo,9
+NECE,Necessidades Específicas,16
+NECEC,Linhas Necessidades Específicas Conteúdo,9
+NECEL,Linhas Necessidades Específicas Checklist,9
+NECL,Linhas Necessidades Checklist,9
+NI,Imputações de Naturezas,16
+NL,Linhas Imputações de Naturezas,7
+NLOG,Log de Utilizadores,28
+NO,Notas Extranet,18
+NOTIFYUSDEVICES,Dispositivos de autenticação PHC Notify,15
+NP,Naturezas do Plano,8
+NPD,Notas pré-definidas,10
+NTF,Notificações,16
+NWWW,Notícias de Web,94
+OC,Códigos de Tesouraria,8
+OD,Previsões de Tesouraria,44
+OL,Movimentos de tesouraria,127
+OLBB,Trf. Conta-Conta,53
+OLBC,Trf. Conta-Caixa,49
+OM,Movimentos Constantes de Tesouraria,40
+OMENU,Opções especiais disponíveis,5
+OP,Orçamento de Tesouraria,31
+OUN,Opções de Navegação,76
+OUNL,Opções de Navegação (Gráfico - Ordenadas),8
+OUNP,Opções de Navegação (Procuras),11
+OUTROSFI,Outras ligações das linhas de documentos de faturação,7
+OV,Objectivos de Vendas,22
+OW,Documentos de tesouraria,87
+OWLI,Linhas de Documentos de tesouraria,24
+OX,Talões de Depósito,57
+OY,Linhas de Talões de Depósitos,19
+OZ,Processos de tesouraria,55
+PACKACCESS,Packages web,6
+PAISES,Tabela de Países,10
+PARA1,Parâmetros do Sistema,17
+PARAU,Parâmetros do Utilizador,17
+PC,Plano de Contas,50
+PCSA,Plano de Contas - Saldos,11
+PD,Adiantamentos a Fornecedores,117
+PDU,Painéis de Informação,26
+PDUP,Páginas de Painéis de Informação,11
+PDUU,Utilizadores de Painéis de Informação,5
+PEM,Propriedades de ecrãs,10
+PF,Perfis de Acesso,8
+PFG,Grupos de Utilizadores de Perfis de Acesso,6
+PFPROG,Produtos por grupo de acesso,6
+PFU,Utilizadores de Perfis de Acesso,5
+PIN,Procedimentos Internos,15
+PL,Linhas de Pagamentos a Fornecedores,119
+PN,Produtos vendidos,78
+PO,Pagamentos a Fornecedores,186
+POCHF,Títulos emitidos de Pagamentos a Fornecedores,17
+POSEXP,Exportações para POS,14
+POT,Totais dos Pagamentos a Fornecedores,18
+PP,Plano de Contas Paralelo,8
+PPPAYMENTS,Pagamentos online via PAYPAL,32
+PPSB,Subscrições via PAYPAL,37
+PQRCT,Perguntas dos Questionários de recrutamentos,18
+PREC,Processamentos das Sociedades,9
+PRNC,Configurações de Impressora,19
+PRNL,"Configurações de Impressora, Linhas",10
+PROCASYNC,Processamentos Assíncronos,41
+PROCASYNCL,Linhas de Processamentos Assíncronos,12
+QBDC,Conteúdos para Broadcast,34
+QFLL,Tipos de Artigos de Qualidade de Fornecedores,21
+QRCT,Questionários de recrutamentos,24
+QTEMRCT,Questionários dos templates de recrutamento,10
+QUC,Questionários,28
+QUP,Perguntas dos Questionários,13
+QUPD,Acessos aos questionários nos Packages Digitais,6
+QUR,Respostas aos Questionários,32
+RBDR,Rubricas das Demonstrações Financeiras,9
+RD,Recibos de adiantamentos,235
+RE,Recibos para Clientes,275
+RECH,Títulos de Recibos para Clientes,18
+REGIVA,Regimes de IVA,9
+REL,Relações entre tabelas,11
+RELCONFIG,Configuração de Relatórios de Crédito,12
+RELCRED,Relatórios de Crédito,60
+RELCREDLI,Linhas de Relatórios de Crédito,11
+REREV,Recibos para Clientes - Revogações e processamentos de Cobranças,34
+RET,Totais dos Recibos para Clientes,20
+REV,Revalorizações,33
+RL,Linhas de Recibos para Clientes,122
+RN,Rubricas das Notas às Demonstrações Financeiras,8
+RPCL,Contratos de Rappel a Clientes,51
+RPEC,Processos Interop,27
+RPFL,Contratos de Rappel a Fornecedores,45
+RQRCT,Respostas dos Questionários de recrutamentos,9
+RS,Apuramento de Resultados,29
+RT,Artigos Alternativos,8
+RV,Apuramento de IVA,25
+SA,Stock por Armazém,23
+SAL,Stock por Lote/Armazém,14
+SAX,Stock por Armazém Global,21
+SBI,Tabelas para busca instantânea,22
+SBID,Dados para busca instantânea,32
+SC,Artigos Compostos,18
+SCD,Scorecards,16
+SCDIN,Indicadores de Scorecards,42
+SDDAUT,Autorizações de Débito em Conta,46
+SE,Lotes,57
+SEPACRET,Códigos de Retorno SEPA,8
+SERIEAT,Séries de documentos na AT,21
+SESS,Sessões Web,10
+SFCNOME,Tabela de Grelhas Tipo de Cores,6
+SFCOR,Grelhas tipo - cores,6
+SFTAM,Grelhas tipo - tamanhos,7
+SFTNOME,Tabela de Grelhas Tipo de Tamanhos,6
+SGC,Grelhas dos artigos - cores,8
+SGT,Grelhas dos artigos - tamanhos,10
+SL,Movimentos de Stock,86
+SO,Imposto de selo de títulos de dívida,12
+SP,Promoções,61
+SPP,Tipos de promoções pré-definidas,12
+SPPV,Variáveis de Tipos de promoções pré-definidas,11
+ST,Stocks e Serviços,203
+STACKTIMER,Documentos Assíncronos Por Processar,6
+STC,Artigos de Custo,13
+STCAT,Configuração de categorias de artigos,37
+STFAMI,Famílias de Artigos,65
+STFOR,Fórmulas Para Gestão de Stocks,8
+STIC,Inventário Fisico,31
+STIL,Linhas de Inventário Fisico,37
+STOBS,Observações de Stocks e Serviços,61
+STREL,Configuração dos artigos relacionados,10
+STT,Configuração de Títulos de Dívida,21
+ST_UNIDADE,Tabela de Unidades de stock,0
+SUBEUSQL,Subscrição de Análises Avançadas,53
+SV,Movimentos de Valor em Stock,32
+SX,Informação por cor e tamanho,38
+SXX,"Stock por Armazém, Cor e Tamanho Global",36
+SZ,Nomes de Armazéns,15
+SZADRS,Moradas de Carga e Descarga,26
+TABVERSAO,Versões de Tabelas,30
+TAXASIVA,Taxas de IVA,8
+TAXONOMIAS,Tabela de taxonomia,13
+TBPR,Tabelas de preços,24
+TBPRI,Linhas das Tabelas de preços,20
+TC,Teclas do utilizador,7
+TD,Configuração de Documentos de Faturação,196
+TD2,Configuração de Documentos de Faturação - Outros Dados,12
+TDESP,Tipos de Despesa,7
+TEMRCT,Templates de recrutamento,9
+TFCLA,Tabela de classes para artigos com TaxFree,6
+TFGBLUESRV,Tabela de configuração GlobalBlue com TaxFree,11
+TI,Teclas do utilizador (linhas),14
+TIPOEMP,Tipo de Empresa,6
+TL,Decretos Lei de Reavaliações,11
+TLJ,Temas da Loja Web,6
+TN,Chamadas telefónicas,65
+TP,Condições de Pagamento,22
+TPDIST,Tipos de distintivos,14
+TPDISTL,Distintivos,17
+TPEMAIL,Templates de e-mail,20
+TPFF,Tabela Tipos de Feriados,7
+TPIMP,Condições de Pagamento de Documentos Importados,9
+TPL,Condições de Pagamento para Multi-Pagamento,8
+TR,Textos rápidos para campos de texto (memo),13
+TR_GRUPO,Grupos de Textos rápidos,0
+TS,Configuração de Dossiers Internos,211
+TS2,Configuração de Dossiers Internos - Outros Dados,104
+TSRD,Configuração de Recibos de adiantamento para Clientes,27
+TSRE,Configuração de Recibos de c/c para Clientes,30
+TT,Templates,10
+TTL,Registos de Templates,23
+TU,Tabelas do utilizador,12
+TUCA,Tabelas do utilizador - campos,15
+TUFO,ecrãs do utilizador,30
+TZ,Códigos de Amortização,12
+VF,Campos Virtuais de Relatório,10
+VL,Linhas de Pagamentos a Vendedores,26
+VMENU,Acessos disponíveis,12
+VOICECOMREC,RecentesPHCVoice,6
+VY,C/Correntes Vendedores,62
+VYDOC,Documentos de C/Correntes Vendedores,8
+VZ,Pagamentos a Vendedores,60
+VZF,Relação zona do Cliente - Fornecedor,8
+WEBPAY,Pagamentos online via UNICRE,27
+WK,Workflow Operacional,19
+WKCCOLS,Colunas de Cabeçalhos de Documentos de Workflow Operacional,11
+WKDOCS,Documentos de Workflow Operacional,10
+WKLCOLS,Colunas de Linhas de Documentos de Workflow Operacional,14
+WMDC,Mapas Definidos Web,41
+WR,Relatórios,24
+XD,Configuração de documentos XML,40
+XDE,Extensões de Documentos XML,24
+XDL,Linhas de Documentos XML,15
+XE,Exportação de Tabelas,24
+XFT,Configuração de Faturação Personalizada,7

@@ -56,7 +56,7 @@ UPDATE dbo.u_crmfila
 SELECT TOP (@max)
        RTRIM(u_crmfilastamp), RTRIM(origem), RTRIM(entidade), RTRIM(tipoconta),
        RTRIM(stamporigem), RTRIM(codigo), RTRIM(operacao)
-  FROM dbo.u_crmfila
+  FROM dbo.u_crmfila WITH (NOLOCK)
  WHERE estado = @pendente AND entidade = @entidade AND tipoconta = @tipoconta
    AND origem IN ({originParams}) AND u_crmfilastamp > @depois
    AND datacriacao <= DATEADD(SECOND, -@atraso, GETDATE())
@@ -91,10 +91,10 @@ SELECT TOP (@max)
         // Só conta o ÚLTIMO registo da fila de cada conta: um ERRO antigo já resolvido não bloqueia
         cmd.CommandText = $@"
 SELECT DISTINCT RTRIM(f.stamporigem)
-  FROM dbo.u_crmfila AS f
+  FROM dbo.u_crmfila AS f WITH (NOLOCK)
  WHERE f.entidade = @entidade AND f.tipoconta = @tipoconta AND f.stamporigem IN ({stampParams})
    AND f.estado IN (@pendente, @processar, @erro)
-   AND f.u_crmfilastamp = (SELECT MAX(x.u_crmfilastamp) FROM dbo.u_crmfila AS x
+   AND f.u_crmfilastamp = (SELECT MAX(x.u_crmfilastamp) FROM dbo.u_crmfila AS x WITH (NOLOCK)
                             WHERE x.entidade = f.entidade AND x.tipoconta = f.tipoconta AND x.stamporigem = f.stamporigem)";
         cmd.Parameters.AddWithValue("@entidade", entity);
         cmd.Parameters.AddWithValue("@tipoconta", accountType);
@@ -105,6 +105,30 @@ SELECT DISTINCT RTRIM(f.stamporigem)
         await using var reader = await cmd.ExecuteReaderAsync(ct).ConfigureAwait(false);
         while (await reader.ReadAsync(ct).ConfigureAwait(false)) blocked.Add(reader.GetString(0));
         return blocked;
+    }
+
+    public async Task<IReadOnlySet<string>> GetEverSentSourceStampsAsync(
+        string entity, string accountType, IReadOnlyCollection<string> sourceStamps, CancellationToken ct)
+    {
+        var sent = new HashSet<string>(StringComparer.Ordinal);
+        if (sourceStamps.Count == 0) return sent;
+
+        await using var connection = await OpenAsync(ct).ConfigureAwait(false);
+        await using var cmd = new SqlCommand { Connection = connection };
+        var stampParams = AddList(cmd, "s", sourceStamps);
+        // Já enviado = existe um registo ENVIADO de criação/alteração (U) desta entidade e stamp
+        cmd.CommandText = $@"
+SELECT DISTINCT RTRIM(f.stamporigem)
+  FROM dbo.u_crmfila AS f WITH (NOLOCK)
+ WHERE f.entidade = @entidade AND f.tipoconta = @tipoconta AND f.stamporigem IN ({stampParams})
+   AND f.estado = @enviado AND f.operacao = 'U'";
+        cmd.Parameters.AddWithValue("@entidade", entity);
+        cmd.Parameters.AddWithValue("@tipoconta", accountType);
+        cmd.Parameters.AddWithValue("@enviado", QueueStatus.Sent);
+
+        await using var reader = await cmd.ExecuteReaderAsync(ct).ConfigureAwait(false);
+        while (await reader.ReadAsync(ct).ConfigureAwait(false)) sent.Add(reader.GetString(0));
+        return sent;
     }
 
     public async Task<IReadOnlyList<QueueItem>> ClaimAsync(IReadOnlyList<QueueItem> items, CancellationToken ct)

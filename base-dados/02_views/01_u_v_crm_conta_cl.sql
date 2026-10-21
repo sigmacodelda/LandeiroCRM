@@ -28,6 +28,6 @@ SELECT
     LTRIM(RTRIM(c.fax))                                           AS fax,
     CONVERT(varchar(3), 'CLI')                                    AS accountType,
     CONVERT(varchar(7), CASE WHEN c.inactivo = 1 THEN 'Inativo' ELSE 'Ativo' END) AS status
-FROM dbo.cl AS c
-LEFT JOIN dbo.cl2 AS x ON x.cl2stamp = c.clstamp;
+FROM dbo.cl AS c WITH (NOLOCK)
+LEFT JOIN dbo.cl2 AS x WITH (NOLOCK) ON x.cl2stamp = c.clstamp;
 GO

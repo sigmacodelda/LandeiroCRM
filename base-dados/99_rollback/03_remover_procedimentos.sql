@@ -13,3 +13,6 @@ IF OBJECT_ID(N'dbo.up_crm_carga', N'P') IS NOT NULL              DROP PROCEDURE 
 GO
 IF OBJECT_ID(N'dbo.up_crm_enfileirar', N'P') IS NOT NULL         DROP PROCEDURE dbo.up_crm_enfileirar;
 GO
+
+IF OBJECT_ID(N'dbo.sc_CrmEnfileirarEvento', N'P') IS NOT NULL DROP PROCEDURE dbo.sc_CrmEnfileirarEvento;
+GO
