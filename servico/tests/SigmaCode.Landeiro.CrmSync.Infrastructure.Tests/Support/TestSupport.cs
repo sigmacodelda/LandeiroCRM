@@ -124,6 +124,6 @@ public class DemoDbTestBase : IAsyncLifetime
             ("@s", stamp), ("@c", clientStamp), ("@n", name));
 
     protected static Task<string> StatusOfAsync(string sourceStamp, string entity) =>
-        TestDb.ScalarAsync<string>("SELECT TOP 1 RTRIM(estado) FROM dbo.u_crmfila WHERE stamporigem = @s AND entidade = @e ORDER BY u_crmfilastamp DESC",
+        TestDb.ScalarAsync<string>("SELECT TOP 1 RTRIM(estado) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = @s AND entidade = @e ORDER BY u_crmfilastamp DESC",
             ("@s", sourceStamp), ("@e", entity));
 }

@@ -5,6 +5,7 @@
 --   * NÃO usa UPDATE(coluna): o PHC faz UPDATE de todas as colunas ao gravar e há processos
 --     que alteram a CL sem abrir a ficha (ex.: saldos). Compara inserted com deleted e só
 --     regista se mudou algum campo integrado (comparação binária: apanha maiúsculas e acentos).
+--     O estado (cl.inactivo) conta como campo integrado: ao mudar, reenfileira também os contactos da ficha.
 --   * Todas as fichas (sede e estabelecimentos) geram conta, com código NO-ESTAB.
 --   * Trata vários registos de uma vez (conjuntos). Só escreve na fila.
 --   * Nunca impede a gravação da ficha no PHC: qualquer erro interno é engolido.
@@ -29,7 +30,7 @@ BEGIN
         SELECT 'CL', 'CONTA', 'CLI', n.clstamp,
                LTRIM(RTRIM(CONVERT(varchar(20), n.no))) + '-' + LTRIM(RTRIM(CONVERT(varchar(10), n.estab))), 'U'
           FROM (
-                SELECT clstamp, no, estab,
+                SELECT clstamp, no, estab, inactivo,
                        nome     COLLATE Latin1_General_BIN2 AS nome,
                        morada   COLLATE Latin1_General_BIN2 AS morada,
                        codpost  COLLATE Latin1_General_BIN2 AS codpost,
@@ -41,7 +42,7 @@ BEGIN
                        fax      COLLATE Latin1_General_BIN2 AS fax
                   FROM inserted
                 EXCEPT
-                SELECT clstamp, no, estab,
+                SELECT clstamp, no, estab, inactivo,
                        nome     COLLATE Latin1_General_BIN2,
                        morada   COLLATE Latin1_General_BIN2,
                        codpost  COLLATE Latin1_General_BIN2,
@@ -53,6 +54,14 @@ BEGIN
                        fax      COLLATE Latin1_General_BIN2
                   FROM deleted
                ) AS n;
+
+        -- Ativar ou inativar uma ficha muda o estado dos contactos dela (o contacto segue o estado da conta)
+        INSERT @ev (origem, entidade, tipoconta, stamporigem, codigo, operacao)
+        SELECT 'U_CLCONTACT', 'CONTACTO', 'CLI', k.u_clcontactstamp, RTRIM(k.u_clcontactstamp), 'U'
+          FROM inserted AS i
+          JOIN deleted AS d ON d.clstamp = i.clstamp
+          JOIN dbo.u_clcontact AS k WITH (NOLOCK) ON k.clstamp = i.clstamp
+         WHERE i.inactivo <> d.inactivo;
 
         -- Eliminação: fichas que estavam em deleted e já não estão em inserted
         INSERT @ev (origem, entidade, tipoconta, stamporigem, codigo, operacao)

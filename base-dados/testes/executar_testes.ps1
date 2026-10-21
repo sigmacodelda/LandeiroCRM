@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-    Corre os testes SQL (01 a 05) na LAND2_DEMO e mostra o resumo. Cada teste faz ROLLBACK no fim.
+    Corre os testes SQL (01 a 07) na LAND2_DEMO e mostra o resumo. Cada teste faz ROLLBACK no fim.
 
 .DESCRIPTION
     - RECUSA correr em qualquer base que não seja a LAND2_DEMO.
@@ -35,10 +35,10 @@ else {
     $autenticacao = @('-U', $Utilizador, '-P', $palavra)
 }
 
-# (-Filter não aceita intervalos [1-5]: filtra-se pelo nome)
-$testes = @(Get-ChildItem -Path $PSScriptRoot -Filter '*_teste_*.sql' | Where-Object { $_.Name -match '^0[1-5]_' } | Sort-Object Name)
+# (-Filter não aceita intervalos [1-6]: filtra-se pelo nome)
+$testes = @(Get-ChildItem -Path $PSScriptRoot -Filter '*_teste_*.sql' | Where-Object { $_.Name -match '^0[1-7]_' } | Sort-Object Name)
 # Nunca passar "em vazio": sem testes encontrados, isto é um erro
-if ($testes.Count -ne 5) { throw "Esperava 5 ficheiros de teste (01 a 05) e encontrei $($testes.Count) em $PSScriptRoot." }
+if ($testes.Count -ne 7) { throw "Esperava 7 ficheiros de teste (01 a 07) e encontrei $($testes.Count) em $PSScriptRoot." }
 $falhas = 0
 foreach ($teste in $testes) {
     Write-Host "=== $($teste.Name)" -ForegroundColor Cyan

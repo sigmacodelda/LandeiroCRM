@@ -62,6 +62,7 @@ Contrato de uma view de origem: colunas com os **nomes exatos da API** (todas `v
 | `email` | `cl.email` | |
 | `fax` | `cl.fax` | |
 | `accountType` | fixo `CLI` | |
+| `status` | `cl.inactivo` | `Ativo`/`Inativo` (nas contas e, pela conta, nos contactos) |
 
 ### `u_v_crm_contacto_cl` (contactos de clientes)
 

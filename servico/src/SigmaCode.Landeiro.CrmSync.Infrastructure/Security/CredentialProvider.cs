@@ -14,6 +14,7 @@ public sealed record Credentials(string DbConnectionString, string ApiToken)
 
 /// <summary>
 /// Origem das credenciais, por esta ordem:
+///  0) appsettings.Local.json (só testes locais, fora do git), se estiver preenchido;
 ///  1) variáveis de ambiente CRMSYNC_DB_CONNECTION e CRMSYNC_API_TOKEN (testes e desenvolvimento);
 ///  2) ficheiro protegido por DPAPI (âmbito da máquina), criado por deploy/guardar-credenciais.ps1.
 /// O DPAPI está ligado à máquina: o ficheiro copiado para outro servidor não se consegue ler.
@@ -26,10 +27,13 @@ public static class CredentialProvider
     // Entropia adicional (não é um segredo): o ficheiro só se abre com a mesma aplicação. Igual ao script PowerShell.
     internal static readonly byte[] Entropy = Encoding.UTF8.GetBytes("SigmaCode.Landeiro.CrmSync.v1");
 
-    public static Credentials Load(string? protectedFile)
+    // dbFromConfig / tokenFromConfig: valores de um ficheiro local FORA do git (appsettings.Local.json), para
+    // testes na máquina do programador. Quando preenchidos, GANHAM ao ambiente e ao DPAPI (cada um por si),
+    // para uma variável de ambiente esquecida não sobrepor o ficheiro.
+    public static Credentials Load(string? protectedFile, string? dbFromConfig = null, string? tokenFromConfig = null)
     {
-        var db = Environment.GetEnvironmentVariable(DbEnvironmentVariable);
-        var token = Environment.GetEnvironmentVariable(TokenEnvironmentVariable);
+        var db = !string.IsNullOrWhiteSpace(dbFromConfig) ? dbFromConfig : Environment.GetEnvironmentVariable(DbEnvironmentVariable);
+        var token = !string.IsNullOrWhiteSpace(tokenFromConfig) ? tokenFromConfig : Environment.GetEnvironmentVariable(TokenEnvironmentVariable);
 
         // O DPAPI só existe no Windows (o serviço corre num servidor Windows)
         if (OperatingSystem.IsWindows()

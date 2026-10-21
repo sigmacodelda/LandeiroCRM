@@ -24,9 +24,9 @@ GO
 :r 03_procedimentos/02_up_crm_carga.sql
 :r 03_procedimentos/03_up_crm_repor.sql
 :r 03_procedimentos/04_up_crm_consultas.sql
-:r 04_triggers/01_tr_crm_cl.sql
-:r 04_triggers/02_tr_crm_cl2.sql
-:r 04_triggers/03_tr_crm_u_clcontact.sql
+:r 03_procedimentos/05_sc_CrmEnfileirarEvento.sql
+-- Os triggers (04_triggers) foram substituídos pelos eventos do PHC (phc/eventos) e já não se instalam.
+-- Para remover os que já existam na base: 99_rollback/01_remover_triggers.sql
 :r 05_permissoes/01_role_servico.sql
 PRINT N'Instalação concluída em ' + DB_NAME();
 GO

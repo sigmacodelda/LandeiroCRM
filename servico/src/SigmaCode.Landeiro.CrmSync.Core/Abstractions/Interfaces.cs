@@ -14,13 +14,20 @@ public interface IQueueStore
     /// </summary>
     Task<IReadOnlyList<QueueItem>> GetPendingAsync(
         string entity, string accountType, IReadOnlyCollection<string> origins,
-        string afterQueueStamp, int max, CancellationToken ct);
+        string afterQueueStamp, int max, int minAgeSeconds, CancellationToken ct);
 
     /// <summary>
     /// Dos stamps de conta indicados, devolve os que estão "bloqueados": o último registo da fila dessa conta
     /// está PENDENTE, A_PROCESSAR ou em ERRO. Os contactos dessas contas esperam.
     /// </summary>
     Task<IReadOnlySet<string>> GetBlockedSourceStampsAsync(
+        string entity, string accountType, IReadOnlyCollection<string> sourceStamps, CancellationToken ct);
+
+    /// <summary>
+    /// Dos stamps indicados, devolve os que já foram enviados ao CRM alguma vez (têm um registo ENVIADO de alteração).
+    /// Serve para decidir se uma eliminação precisa de inativar algo no CRM.
+    /// </summary>
+    Task<IReadOnlySet<string>> GetEverSentSourceStampsAsync(
         string entity, string accountType, IReadOnlyCollection<string> sourceStamps, CancellationToken ct);
 
     /// <summary>Passa os registos de PENDENTE a A_PROCESSAR. Devolve só os que foram mesmo reservados.</summary>

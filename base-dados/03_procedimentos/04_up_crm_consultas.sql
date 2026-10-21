@@ -8,7 +8,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SELECT origem, entidade, estado, COUNT(*) AS total, MIN(datacriacao) AS mais_antigo, MAX(datacriacao) AS mais_recente
-      FROM dbo.u_crmfila
+      FROM dbo.u_crmfila WITH (NOLOCK)
      GROUP BY origem, entidade, estado
      ORDER BY origem, entidade, estado;
 END
@@ -21,7 +21,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
     SELECT u_crmfilastamp, origem, entidade, codigo, stamporigem, tentativas, ultimamensagem, datacriacao, dataenvio
-      FROM dbo.u_crmfila
+      FROM dbo.u_crmfila WITH (NOLOCK)
      WHERE estado = 'ERRO'
        AND datacriacao >= DATEADD(DAY, -@dias, GETDATE())
      ORDER BY datacriacao DESC;
@@ -38,12 +38,12 @@ BEGIN
 
     SELECT f.datacriacao, f.entidade, f.origem, f.codigo, f.operacao, f.estado, f.tentativas,
            f.acaocrm, f.idcrm, f.dataenvio, f.ultimamensagem, f.u_crmfilastamp
-      FROM dbo.u_crmfila AS f
+      FROM dbo.u_crmfila AS f WITH (NOLOCK)
      WHERE (f.entidade = 'CONTA' AND f.codigo LIKE @prefixo)
         OR (f.entidade = 'CONTACTO'
             AND f.stamporigem IN (SELECT k.u_clcontactstamp
-                                    FROM dbo.u_clcontact AS k
-                                    JOIN dbo.cl AS c ON c.clstamp = k.clstamp
+                                    FROM dbo.u_clcontact AS k WITH (NOLOCK)
+                                    JOIN dbo.cl AS c WITH (NOLOCK) ON c.clstamp = k.clstamp
                                    WHERE c.no = @no))
      ORDER BY f.datacriacao, f.u_crmfilastamp;
 END

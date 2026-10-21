@@ -121,11 +121,11 @@ public class PayloadBuilderTests
     [Fact]
     public void Build_LimitLookupIsCaseInsensitive()
     {
-        var payload = PayloadBuilder.Build("accounts", new[] { Row("S1", ("postalCode", "4000-001-EXTRA")) },
-            new Dictionary<string, int?> { ["POSTALCODE"] = 8 });
+        var payload = PayloadBuilder.Build("accounts", new[] { Row("S1", ("city", "PORTO-EXTRA")) },
+            new Dictionary<string, int?> { ["CITY"] = 5 });
 
         Assert.Single(payload.Warnings);
-        Assert.Contains("4000-001", payload.Json, StringComparison.Ordinal);
+        Assert.Contains("\"city\":\"PORTO\"", payload.Json, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -333,6 +333,16 @@ public class SyncOptionsValidatorTests
         Assert.Equal(7, o.LogRetentionDays);
     }
 
+    [Fact]
+    public void SendDelay_DefaultsToOneMinute_AndCannotBeNegative()
+    {
+        var o = Valid();
+        Assert.Equal(60, o.SendDelaySeconds);
+
+        o.SendDelaySeconds = -1;
+        Assert.Contains(SyncOptionsValidator.Validate(o), e => e.Contains("SendDelaySeconds", StringComparison.Ordinal));
+    }
+
     [Theory]
     [InlineData(0)]
     [InlineData(1001)]
@@ -376,5 +386,110 @@ public class SyncOptionsValidatorTests
         var o = Valid();
         o.Sources.Clear();
         Assert.Contains(SyncOptionsValidator.Validate(o), e => e.Contains("Sources", StringComparison.Ordinal));
+    }
+}
+
+public class FieldSanitizerTests
+{
+    [Theory]
+    [InlineData("geral@sigmacode.pt", "geral@sigmacode.pt", null)]
+    [InlineData("  geral@sigmacode.pt  ", "geral@sigmacode.pt", null)]
+    [InlineData("a@x.pt; b@y.pt", "a@x.pt", FieldSanitizer.EmailAdjusted)]
+    [InlineData("correio@realsabor.pt; raquel@realsabor.pt - luis@realsabor.pt", "correio@realsabor.pt", FieldSanitizer.EmailAdjusted)]
+    [InlineData("a@x.pt , b@y.pt", "a@x.pt", FieldSanitizer.EmailAdjusted)]
+    [InlineData("Não Têm", "", FieldSanitizer.EmailInvalid)]
+    [InlineData("sem arroba.pt", "", FieldSanitizer.EmailInvalid)]
+    [InlineData("a@b", "", FieldSanitizer.EmailInvalid)]
+    [InlineData("", "", null)]
+    [InlineData("   ", "", null)]
+    [InlineData("<a@x.pt>", "a@x.pt", FieldSanitizer.EmailAdjusted)]
+    [InlineData("(a@x.pt)", "a@x.pt", FieldSanitizer.EmailAdjusted)]
+    [InlineData("Rui Silva <a@x.pt>", "a@x.pt", FieldSanitizer.EmailAdjusted)]
+    [InlineData("mailto:a@x.pt", "a@x.pt", FieldSanitizer.EmailAdjusted)]
+    [InlineData("a@x.pt.", "a@x.pt", FieldSanitizer.EmailAdjusted)]
+    [InlineData("a@x.pt/b@y.pt", "a@x.pt", FieldSanitizer.EmailAdjusted)]
+    [InlineData("a@x.pt b@y.pt", "a@x.pt", FieldSanitizer.EmailAdjusted)]
+    [InlineData("a@x.pt​b@y.pt", "a@x.pt", FieldSanitizer.EmailAdjusted)]
+    [InlineData("Joao.Silva+loja@Loja-Norte.Exemplo.PT", "Joao.Silva+loja@Loja-Norte.Exemplo.PT", null)]
+    [InlineData("joão@x.pt", "", FieldSanitizer.EmailInvalid)]
+    [InlineData("a..b@x.pt", "", FieldSanitizer.EmailInvalid)]
+    [InlineData("a@-x.pt", "", FieldSanitizer.EmailInvalid)]
+    public void NormalizeEmail_KeepsAValidOne_TakesTheFirstValid_OrSendsEmpty(string input, string expected, string? expectedRule)
+    {
+        var result = FieldSanitizer.NormalizeEmail(input, out var rule);
+
+        Assert.Equal(expected, result);
+        Assert.Equal(expectedRule, rule);
+    }
+
+    [Fact]
+    public void NormalizeContactName_ReplacesAnEmptyNameOnly()
+    {
+        Assert.Equal("Sem nome", FieldSanitizer.NormalizeContactName("  ", out var rule));
+        Assert.Equal(FieldSanitizer.NameMissing, rule);
+        Assert.Equal("Ana", FieldSanitizer.NormalizeContactName(" Ana ", out var none));
+        Assert.Null(none);
+    }
+
+    [Fact]
+    public void Build_AdjustsEmailAndContactName_AndReportsWithoutTheValue()
+    {
+        var rows = new[]
+        {
+            new SourceRow("S1", null, new List<KeyValuePair<string, string>> { new("name", ""), new("email", "Não Têm") }),
+            new SourceRow("S2", null, new List<KeyValuePair<string, string>> { new("name", "Rui"), new("email", "a@x.pt; b@y.pt") }),
+        };
+
+        var payload = PayloadBuilder.Build("contacts", rows, null);
+
+        using var doc = JsonDocument.Parse(payload.Json);
+        var list = doc.RootElement.GetProperty("contacts");
+        Assert.Equal("Sem nome", list[0].GetProperty("name").GetString());
+        Assert.Equal(string.Empty, list[0].GetProperty("email").GetString());
+        Assert.Equal("a@x.pt", list[1].GetProperty("email").GetString());
+        Assert.Equal(
+            new[] { "S1:name:NOME_EM_FALTA", "S1:email:EMAIL_INVALIDO", "S2:email:EMAIL_AJUSTADO" },
+            payload.Adjustments.Select(a => $"{a.SourceStamp}:{a.Field}:{a.Rule}").ToArray());
+    }
+
+    [Fact]
+    public void Build_DoesNotReplaceAnEmptyNameOnAccounts()
+    {
+        var payload = PayloadBuilder.Build("accounts",
+            new[] { new SourceRow("S1", null, new List<KeyValuePair<string, string>> { new("name", "") }) }, null);
+
+        Assert.Contains("\"name\":\"\"", payload.Json, StringComparison.Ordinal);
+        Assert.Empty(payload.Adjustments);
+    }
+}
+
+public class PostalCodeTests
+{
+    [Theory]
+    [InlineData("4410-387 ARCOZELO VNG", "4410-387", FieldSanitizer.PostalCodeAdjusted)]
+    [InlineData("4410-387  Vila Nova de Gaia", "4410-387", FieldSanitizer.PostalCodeAdjusted)]
+    [InlineData("4410-387", "4410-387", null)]
+    [InlineData("  4410-387  ", "4410-387", null)]
+    [InlineData("4410-3871 X", "4410-3871 X", null)]
+    [InlineData("1000", "1000", null)]
+    [InlineData("SW1A 1AA", "SW1A 1AA", null)]
+    [InlineData("", "", null)]
+    public void NormalizePostalCode_KeepsOnlyNnnnNnn_WhenTextFollows(string input, string expected, string? expectedRule)
+    {
+        Assert.Equal(expected, FieldSanitizer.NormalizePostalCode(input, out var rule));
+        Assert.Equal(expectedRule, rule);
+    }
+
+    [Fact]
+    public void Build_AdjustsThePostalCodeOnAccountsOnly()
+    {
+        var accounts = PayloadBuilder.Build("accounts",
+            new[] { new SourceRow("S1", null, new List<KeyValuePair<string, string>> { new("postalCode", "4410-387 ARCOZELO VNG") }) }, null);
+        var contacts = PayloadBuilder.Build("contacts",
+            new[] { new SourceRow("S1", null, new List<KeyValuePair<string, string>> { new("postalCode", "4410-387 ARCOZELO VNG") }) }, null);
+
+        Assert.Contains("\"postalCode\":\"4410-387\"", accounts.Json, StringComparison.Ordinal);
+        Assert.Equal("postalCode", Assert.Single(accounts.Adjustments).Field);
+        Assert.Contains("ARCOZELO", contacts.Json, StringComparison.Ordinal);
     }
 }

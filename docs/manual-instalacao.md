@@ -79,7 +79,8 @@ Editar `appsettings.json` na pasta de instalação (não contém segredos). Os v
 
 | Chave (`CrmSync:`) | Defeito | Para quê |
 |---|---|---|
-| `IntervalMinutes` | 5 | Intervalo entre ciclos. |
+| `SendDelaySeconds` | 60 | Espera mínima entre um registo entrar na fila e ser enviado. Dá tempo a corrigir e voltar a gravar no PHC (as gravações seguidas juntam-se num só registo). 0 = enviar no ciclo seguinte. |
+| `IntervalMinutes` | 120 | Intervalo entre ciclos, em minutos (120 = de 2 em 2 horas; para segundos use decimais, por exemplo 0.25 = 15 segundos). O serviço acorda, trata o que estiver pendente e volta a dormir. |
 | `BatchSize` | 100 | Registos por pedido (1 a 1000). |
 | `LogRetentionDays` | 7 | Logs com mais de N dias são apagados. |
 | `LogDirectory` | `logs` | Relativa à pasta do serviço. |

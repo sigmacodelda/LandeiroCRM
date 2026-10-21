@@ -28,16 +28,17 @@ BEGIN
     INSERT @ev (origem, entidade, tipoconta, stamporigem, codigo, operacao)
     SELECT 'CL', 'CONTA', 'CLI', c.clstamp,
            LTRIM(RTRIM(CONVERT(varchar(20), c.no))) + '-' + LTRIM(RTRIM(CONVERT(varchar(10), c.estab))), 'U'
-      FROM dbo.cl AS c
+      FROM dbo.cl AS c WITH (NOLOCK)
      WHERE (@no IS NULL OR c.no = @no);
     EXEC dbo.up_crm_enfileirar @ev, @contas OUTPUT;
 
     -- 2.º os contactos, ligados à ficha pelo clstamp
     DELETE @ev;
     INSERT @ev (origem, entidade, tipoconta, stamporigem, codigo, operacao)
-    SELECT 'U_CLCONTACT', 'CONTACTO', 'CLI', k.u_clcontactstamp, RTRIM(k.u_clcontactstamp), 'U'
-      FROM dbo.u_clcontact AS k
-      JOIN dbo.cl AS c ON c.clstamp = k.clstamp
+    SELECT 'U_CLCONTACT', 'CONTACTO', 'CLI', k.u_clcontactstamp,
+           RTRIM(k.u_clcontactstamp) + '|' + LTRIM(RTRIM(CONVERT(varchar(20), c.no))) + '-' + LTRIM(RTRIM(CONVERT(varchar(10), c.estab))), 'U'
+      FROM dbo.u_clcontact AS k WITH (NOLOCK)
+      JOIN dbo.cl AS c WITH (NOLOCK) ON c.clstamp = k.clstamp
      WHERE (@no IS NULL OR c.no = @no);
     EXEC dbo.up_crm_enfileirar @ev, @contactos OUTPUT;
 

@@ -67,6 +67,9 @@ Ficheiros `logs\crmsync-AAAAMMDD.log` (junto ao serviço). Uma linha por evento,
 | `FALHA_REDE` | ERRO | O pedido nem chegou (rede, timeout, ligação recusada). Todo o lote em ERRO. **Em destaque.** |
 | `FALHA_AUTENTICACAO` | ERRO | 401/403. Todo o lote em ERRO. **Em destaque.** |
 | `TRUNCADO` | AVISO | Um campo excedeu o limite do CRM (o detalhe diz qual; nunca o valor). |
+| `EMAIL_AJUSTADO` / `EMAIL_INVALIDO` | AVISO | Email com vários valores (enviado o primeiro válido) ou sem nenhum válido (enviado vazio). Só o campo, nunca o valor. |
+| `NOME_EM_FALTA` | AVISO | Contacto sem nome no PHC: enviado "Sem nome". |
+| `CODPOSTAL_AJUSTADO` | AVISO | Código postal com localidade: enviado só o `NNNN-NNN`. |
 | `SEM_ENVIO` | AVISO | Eliminação por tratar à mão no CRM. |
 | `AGUARDA_CONTA` | INFO | Contacto à espera da conta. |
 | `RECUPERADO` | AVISO | Registos em A_PROCESSAR repostos a PENDENTE depois de uma paragem. |
@@ -78,12 +81,14 @@ Ficheiros `logs\crmsync-AAAAMMDD.log` (junto ao serviço). Uma linha por evento,
 Os logs não têm o token, a connection string nem dados pessoais. Só os ficheiros de log são apagados (7 dias por
 defeito); a fila nunca.
 
-## 5. Eliminações (`SEM_ENVIO`)
+## 5. Eliminações (inativação no CRM)
 
-Quando se apaga uma ficha ou um contacto no PHC, a fila regista a operação `D` com o código. O serviço **não chama
-a API** (não há endpoint) e marca-o `SEM_ENVIO`, com aviso no log. **Ação manual:** apagar/inativar esse registo no CRM
-(Código na coluna `codigo`; ver `up_crm_consulta_historico`). Quando a Orcinus disponibilizar o endpoint (P4), basta
-implementar o envio da operação `D` no serviço.
+Quando se apaga uma ficha ou um contacto no PHC, a fila regista a operação `D` com o código (nos contactos,
+`contactCode|accountCode`). A API não elimina, por isso o serviço envia o registo como **Inativo**, só com os códigos
+(`{code, status}` na conta; `{accountCode, contactCode, status}` no contacto) e marca-o `ENVIADO`.
+Se o registo **nunca foi enviado** ao CRM, ou o contacto já não tem ficha (sem código da conta), não há nada a inativar:
+fica `SEM_ENVIO` (INFO no log). **Pendente:** a Orcinus confirmar que a API aceita o pedido só com estes campos
+(`docs/email-orcinus-3.md`); se rejeitar, o registo fica em `ERRO` com a mensagem da API.
 
 Ver as pendentes de tratamento manual:
 

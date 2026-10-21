@@ -6,7 +6,7 @@ Execução de 2026-10-13, na **LAND2_DEMO** (SQL Server 2019, `192.168.10.79\ENT
 ## Como correr
 
 ```powershell
-# 1) Testes SQL (92 asserts, cada ficheiro faz ROLLBACK; recusam outra base que não a LAND2_DEMO)
+# 1) Testes SQL (116 asserts, cada ficheiro faz ROLLBACK; recusam outra base que não a LAND2_DEMO)
 $env:CRMSYNC_SQL_PASSWORD = '<password>'     # nunca em ficheiros
 .\base-dados\testes\executar_testes.ps1 -Servidor 'tcp:192.168.10.79\ENT' -Utilizador sa
 
@@ -32,7 +32,7 @@ Os testes de integração por base de dados recusam correr se a fila tiver regis
 | Ponta a ponta | serviço real + LAND2_DEMO + API simulada (secção 5) | 13 cenários | OK |
 | Scripts | rollback, guardas da instalação, `publicar.ps1`, `guardar-credenciais.ps1` | ver secção 4 | OK |
 
-Total automatizado: **92 SQL + 128 .NET**.
+Total automatizado: **116 SQL + 165 .NET** (103 unitários + 62 de integração).
 
 ## 1. Testes SQL (o que cada ficheiro prova)
 

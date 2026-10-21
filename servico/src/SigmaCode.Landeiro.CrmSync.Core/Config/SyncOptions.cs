@@ -9,6 +9,12 @@ public sealed class SyncOptions
     /// <summary>Intervalo entre ciclos, em minutos (por defeito 5).</summary>
     public double IntervalMinutes { get; set; } = 5;
 
+    /// <summary>
+    /// Espera mínima, em segundos, entre um registo entrar na fila e ser enviado (por defeito 60). Dá tempo a corrigir
+    /// e voltar a gravar no PHC: as gravações seguidas juntam-se num só registo. 0 = enviar logo no ciclo seguinte.
+    /// </summary>
+    public int SendDelaySeconds { get; set; } = 60;
+
     /// <summary>Número máximo de registos por pedido à API (por defeito 100).</summary>
     public int BatchSize { get; set; } = 100;
 
@@ -92,6 +98,7 @@ public static class SyncOptionsValidator
         var errors = new List<string>();
 
         if (options.IntervalMinutes <= 0) errors.Add("IntervalMinutes tem de ser maior que 0.");
+        if (options.SendDelaySeconds < 0) errors.Add("SendDelaySeconds não pode ser negativo.");
         if (options.BatchSize is < 1 or > 1000) errors.Add("BatchSize tem de estar entre 1 e 1000.");
         if (options.LogRetentionDays < 1) errors.Add("LogRetentionDays tem de ser pelo menos 1.");
         if (options.ApiTimeoutSeconds < 1) errors.Add("ApiTimeoutSeconds tem de ser pelo menos 1.");

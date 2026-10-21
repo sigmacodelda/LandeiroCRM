@@ -158,6 +158,23 @@ public class CredentialProviderTests : IDisposable
     }
 
     [Fact]
+    public void Load_ConfigValues_WinOverEnvironment_AndEnvironmentIsUsedWhenConfigIsEmpty()
+    {
+        Environment.SetEnvironmentVariable(CredentialProvider.DbEnvironmentVariable, "Server=env");
+        Environment.SetEnvironmentVariable(CredentialProvider.TokenEnvironmentVariable, "tok-env");
+
+        // Com valores no ficheiro local: ganham ao ambiente (uma variável esquecida não os sobrepõe)
+        var c = CredentialProvider.Load(null, "Server=cfg", "tok-cfg");
+        Assert.Equal("Server=cfg", c.DbConnectionString);
+        Assert.Equal("tok-cfg", c.ApiToken);
+
+        // Sem valores no ficheiro: usa o ambiente
+        c = CredentialProvider.Load(null, "  ", null);
+        Assert.Equal("Server=env", c.DbConnectionString);
+        Assert.Equal("tok-env", c.ApiToken);
+    }
+
+    [Fact]
     public void Load_WithNothingConfigured_SaysWhatIsMissing_WithoutValues()
     {
         var ex = Assert.Throws<InvalidOperationException>(() => CredentialProvider.Load(null));

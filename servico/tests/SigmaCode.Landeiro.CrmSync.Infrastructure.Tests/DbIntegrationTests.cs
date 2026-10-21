@@ -30,7 +30,7 @@ public class SqlQueueStoreTests : DemoDbTestBase
     {
         await using var c = new SqlConnection(TestDb.ConnectionString);
         await c.OpenAsync();
-        await using var cmd = new SqlCommand("SELECT RTRIM(estado), idcrm, acaocrm, ultimamensagem, tentativas, dataenvio FROM dbo.u_crmfila WHERE u_crmfilastamp = @s", c);
+        await using var cmd = new SqlCommand("SELECT RTRIM(estado), idcrm, acaocrm, ultimamensagem, tentativas, dataenvio FROM dbo.u_crmfila WITH (NOLOCK) WHERE u_crmfilastamp = @s", c);
         cmd.Parameters.AddWithValue("@s", stamp);
         await using var r = await cmd.ExecuteReaderAsync();
         Assert.True(await r.ReadAsync());
@@ -52,7 +52,7 @@ public class SqlQueueStoreTests : DemoDbTestBase
         await InsertRowAsync("CRMIT-Q-07", "PENDENTE", type: "FOR", origin: "FL");
         await InsertRowAsync("CRMIT-Q-08", "PENDENTE", origin: "OUTRA");
 
-        var items = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL", "CL2" }, "CRMIT-", 100, CancellationToken.None);
+        var items = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL", "CL2" }, "CRMIT-", 100, 0, CancellationToken.None);
 
         var mine = items.Where(i => i.QueueStamp.StartsWith("CRMIT-", StringComparison.Ordinal)).Select(i => i.QueueStamp).ToArray();
         Assert.Equal(new[] { "CRMIT-Q-01", "CRMIT-Q-02", "CRMIT-Q-03" }, mine);
@@ -66,12 +66,29 @@ public class SqlQueueStoreTests : DemoDbTestBase
     }
 
     [DbFact]
+    public async Task GetPending_WaitsForTheMinimumAge_BeforeReturningARecord()
+    {
+        // Um registo novo (acabado de entrar) e outro com 2 minutos
+        await InsertRowAsync("CRMIT-D-1", "PENDENTE");
+        await InsertRowAsync("CRMIT-D-2", "PENDENTE");
+        // (a tabela do PHC tem por defeito 1900-01-01: define-se a data de cada um)
+        await TestDb.ExecAsync("UPDATE dbo.u_crmfila SET datacriacao = GETDATE() WHERE u_crmfilastamp = 'CRMIT-D-1'");
+        await TestDb.ExecAsync("UPDATE dbo.u_crmfila SET datacriacao = DATEADD(MINUTE, -2, GETDATE()) WHERE u_crmfilastamp = 'CRMIT-D-2'");
+
+        var waiting = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, "CRMIT-D-", 100, 60, CancellationToken.None);
+        var noDelay = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, "CRMIT-D-", 100, 0, CancellationToken.None);
+
+        Assert.Equal(new[] { "CRMIT-D-2" }, waiting.Select(i => i.QueueStamp).ToArray());
+        Assert.Equal(new[] { "CRMIT-D-1", "CRMIT-D-2" }, noDelay.Select(i => i.QueueStamp).ToArray());
+    }
+
+    [DbFact]
     public async Task GetPending_PagesByQueueStamp()
     {
         for (var i = 1; i <= 5; i++) await InsertRowAsync($"CRMIT-P-{i}", "PENDENTE");
 
-        var first = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, "CRMIT-P-", 2, CancellationToken.None);
-        var second = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, first[^1].QueueStamp, 2, CancellationToken.None);
+        var first = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, "CRMIT-P-", 2, 0, CancellationToken.None);
+        var second = await Store().GetPendingAsync("CONTA", "CLI", new[] { "CL" }, first[^1].QueueStamp, 2, 0, CancellationToken.None);
 
         Assert.Equal(new[] { "CRMIT-P-1", "CRMIT-P-2" }, first.Select(x => x.QueueStamp).ToArray());
         Assert.Equal(new[] { "CRMIT-P-3", "CRMIT-P-4" }, second.Select(x => x.QueueStamp).ToArray());
@@ -215,7 +232,7 @@ public class SqlSourceReaderAndLockTests : DemoDbTestBase
         Assert.Equal("CRMIT-CL-01", row.Stamp);
         Assert.Null(row.AccountStamp);
         Assert.Equal(
-            new[] { "code", "name", "address", "postalCode", "city", "country", "vatNumber", "phone", "mobilePhone", "email", "fax", "accountType" },
+            new[] { "code", "name", "address", "postalCode", "city", "country", "vatNumber", "phone", "mobilePhone", "email", "fax", "accountType", "status" },
             row.Fields.Select(f => f.Key).ToArray());
         var values = row.Fields.ToDictionary(f => f.Key, f => f.Value);
         Assert.Equal("99999981-0", values["code"]);
@@ -223,6 +240,7 @@ public class SqlSourceReaderAndLockTests : DemoDbTestBase
         Assert.Equal("Rua Teste", values["address"]);
         Assert.Equal("Espanha", values["country"]);
         Assert.Equal("CLI", values["accountType"]);
+        Assert.Equal("Ativo", values["status"]);
     }
 
     [DbFact]
@@ -283,6 +301,7 @@ public class EndToEndWithStubbedApiTests : DemoDbTestBase
     {
         ApiBaseUrl = "http://api.teste/index.php",
         BatchSize = 100,
+        SendDelaySeconds = 0,   // os testes enviam logo (o atraso de 60 s tem o seu próprio teste)
         FieldLimits = limits ?? new(),
         Sources =
         {
@@ -334,7 +353,7 @@ public class EndToEndWithStubbedApiTests : DemoDbTestBase
     private static async Task RequireOnlyTestRowsPendingAsync()
     {
         var others = await TestDb.ScalarAsync<int>(
-            "SELECT COUNT(*) FROM dbo.u_crmfila WHERE estado IN ('PENDENTE','A_PROCESSAR') AND stamporigem NOT LIKE @p", ("@p", Prefix + "%"));
+            "SELECT COUNT(*) FROM dbo.u_crmfila WITH (NOLOCK) WHERE estado IN ('PENDENTE','A_PROCESSAR') AND stamporigem NOT LIKE @p", ("@p", Prefix + "%"));
         Assert.True(others == 0, $"A fila da LAND2_DEMO tem {others} registo(s) por enviar que não são de teste; processá-los ou repô-los antes de correr estes testes.");
     }
 
@@ -362,8 +381,8 @@ public class EndToEndWithStubbedApiTests : DemoDbTestBase
         Assert.Equal("ENVIADO", await StatusOfAsync("CRMIT-CL-10", "CONTA"));
         Assert.Equal("ENVIADO", await StatusOfAsync("CRMIT-CL-11", "CONTA"));
         Assert.Equal("ENVIADO", await StatusOfAsync("CRMIT-K-10", "CONTACTO"));
-        Assert.Equal("Updated", await TestDb.ScalarAsync<string>("SELECT TOP 1 RTRIM(acaocrm) FROM dbo.u_crmfila WHERE stamporigem = 'CRMIT-CL-10'"));
-        Assert.StartsWith("crm-", await TestDb.ScalarAsync<string>("SELECT TOP 1 RTRIM(idcrm) FROM dbo.u_crmfila WHERE stamporigem = 'CRMIT-CL-10'"), StringComparison.Ordinal);
+        Assert.Equal("Updated", await TestDb.ScalarAsync<string>("SELECT TOP 1 RTRIM(acaocrm) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = 'CRMIT-CL-10'"));
+        Assert.StartsWith("crm-", await TestDb.ScalarAsync<string>("SELECT TOP 1 RTRIM(idcrm) FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = 'CRMIT-CL-10'"), StringComparison.Ordinal);
     }
 
     [DbFact]
@@ -401,7 +420,7 @@ public class EndToEndWithStubbedApiTests : DemoDbTestBase
     }
 
     [DbFact]
-    public async Task DeletedContact_BecomesNoSend_WithoutCallingTheApi()
+    public async Task DeletedContact_IsSentAsInactive_WithAccountAndContactCodes()
     {
         await RequireOnlyTestRowsPendingAsync();
         await InsertClientAsync("CRMIT-CL-14", 99999984, 0, "Cliente");
@@ -413,9 +432,12 @@ public class EndToEndWithStubbedApiTests : DemoDbTestBase
         await TestDb.ExecAsync("DELETE FROM dbo.u_clcontact WHERE u_clcontactstamp = 'CRMIT-K-14'");
         await rig.Runner.RunCycleAsync(CancellationToken.None);
 
-        Assert.Equal(calls, rig.Handler.Requests.Count);
-        Assert.Equal("SEM_ENVIO", await StatusOfAsync("CRMIT-K-14", "CONTACTO"));
-        Assert.Contains(rig.Log.Entries, e => e.Result == "SEM_ENVIO" && e.Code == "CRMIT-K-14");
+        Assert.Equal(calls + 1, rig.Handler.Requests.Count);
+        var body = rig.Handler.Requests[^1].Body;
+        Assert.Contains("\"accountCode\":\"99999984-0\"", body, StringComparison.Ordinal);
+        Assert.Contains("\"contactCode\":\"CRMIT-K-14\"", body, StringComparison.Ordinal);
+        Assert.Contains("\"status\":\"Inativo\"", body, StringComparison.Ordinal);
+        Assert.Equal("ENVIADO", await StatusOfAsync("CRMIT-K-14", "CONTACTO"));
     }
 
     [DbFact]
@@ -430,7 +452,7 @@ public class EndToEndWithStubbedApiTests : DemoDbTestBase
 
         await rig.Runner.RunCycleAsync(CancellationToken.None);
         Assert.Equal("ERRO", await StatusOfAsync("CRMIT-CL-15", "CONTA"));
-        Assert.Contains("422", await TestDb.ScalarAsync<string>("SELECT TOP 1 ultimamensagem FROM dbo.u_crmfila WHERE stamporigem = 'CRMIT-CL-15'"), StringComparison.Ordinal);
+        Assert.Contains("422", await TestDb.ScalarAsync<string>("SELECT TOP 1 ultimamensagem FROM dbo.u_crmfila WITH (NOLOCK) WHERE stamporigem = 'CRMIT-CL-15'"), StringComparison.Ordinal);
 
         await rig.Runner.RunCycleAsync(CancellationToken.None);   // sem reenvio automático
         Assert.Single(rig.Handler.Requests);

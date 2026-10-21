@@ -42,7 +42,7 @@ public sealed class FakeQueueStore : IQueueStore
     }
 
     public Task<IReadOnlyList<QueueItem>> GetPendingAsync(string entity, string accountType, IReadOnlyCollection<string> origins,
-        string afterQueueStamp, int max, CancellationToken ct)
+        string afterQueueStamp, int max, int minAgeSeconds, CancellationToken ct)
     {
         IReadOnlyList<QueueItem> result = Rows
             .Where(r => r.Status == QueueStatus.Pending && r.Item.Entity == entity && r.Item.AccountType == accountType
@@ -64,6 +64,16 @@ public sealed class FakeQueueStore : IQueueStore
         }
 
         return Task.FromResult<IReadOnlySet<string>>(blocked);
+    }
+
+    public Task<IReadOnlySet<string>> GetEverSentSourceStampsAsync(string entity, string accountType,
+        IReadOnlyCollection<string> sourceStamps, CancellationToken ct)
+    {
+        var sent = Rows
+            .Where(r => r.Item.Entity == entity && r.Item.AccountType == accountType && r.Status == QueueStatus.Sent
+                        && r.Item.Operation == QueueOperation.Upsert && sourceStamps.Contains(r.Item.SourceStamp))
+            .Select(r => r.Item.SourceStamp).ToHashSet(StringComparer.Ordinal);
+        return Task.FromResult<IReadOnlySet<string>>(sent);
     }
 
     public Task<IReadOnlyList<QueueItem>> ClaimAsync(IReadOnlyList<QueueItem> items, CancellationToken ct)

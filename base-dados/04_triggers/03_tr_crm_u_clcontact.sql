@@ -2,8 +2,8 @@
 -- tr_crm_u_clcontact (tabela U_CLCONTACT): INSERT, UPDATE e DELETE.
 --
 -- Compara inserted com deleted e só regista se mudou um campo integrado:
---   nome, funcao, tipo, telefone, tlmvl, email, departamento e a ligação à ficha (clstamp).
--- Não são integrados (a API não tem campo): contacto, fax, estab, no.
+--   nome, contacto, funcao, tipo, telefone, tlmvl, email, departamento e a ligação à ficha (clstamp).
+-- Não são integrados (a API não tem campo): fax, estab, no.
 --
 -- Exceção ao "não usar UPDATE(coluna)": a coluna OBS é do tipo text e o SQL Server não
 -- deixa ler colunas text em inserted/deleted num trigger AFTER, por isso não há como
@@ -12,7 +12,7 @@
 -- upsert) quando o PHC regrava a linha inteira sem alterações.
 --
 -- Só enfileira alterações de contactos com ficha CL (órfãos ficam fora). Eliminações
--- registam sempre. Nunca impede a gravação no PHC.
+-- registam sempre (o serviço envia-as ao CRM como "Inativo"). Nunca impede a gravação no PHC.
 -- =============================================================================
 CREATE OR ALTER TRIGGER dbo.tr_crm_u_clcontact
 ON dbo.u_clcontact
@@ -35,6 +35,7 @@ BEGIN
           FROM (
                 SELECT u_clcontactstamp, clstamp,
                        nome         COLLATE Latin1_General_BIN2 AS nome,
+                       contacto     COLLATE Latin1_General_BIN2 AS contacto,
                        funcao       COLLATE Latin1_General_BIN2 AS funcao,
                        tipo         COLLATE Latin1_General_BIN2 AS tipo,
                        telefone     COLLATE Latin1_General_BIN2 AS telefone,
@@ -45,6 +46,7 @@ BEGIN
                 EXCEPT
                 SELECT u_clcontactstamp, clstamp,
                        nome         COLLATE Latin1_General_BIN2,
+                       contacto     COLLATE Latin1_General_BIN2,
                        funcao       COLLATE Latin1_General_BIN2,
                        tipo         COLLATE Latin1_General_BIN2,
                        telefone     COLLATE Latin1_General_BIN2,
@@ -66,11 +68,16 @@ BEGIN
         SELECT 'U_CLCONTACT', 'CONTACTO', 'CLI', m.stamp, RTRIM(m.stamp), 'U'
           FROM @mudou AS m
           JOIN inserted AS i ON i.u_clcontactstamp = m.stamp
-         WHERE EXISTS (SELECT 1 FROM dbo.cl AS c WHERE c.clstamp = i.clstamp);
+         WHERE EXISTS (SELECT 1 FROM dbo.cl AS c WITH (NOLOCK) WHERE c.clstamp = i.clstamp);
 
-        -- Eliminação
+        -- Eliminação. O código fica "contactCode|accountCode": depois de apagado o contacto já não há como saber
+        -- a conta, e o serviço precisa dela para o inativar no CRM (se a ficha já não existir, fica só o contactCode).
         INSERT @ev (origem, entidade, tipoconta, stamporigem, codigo, operacao)
-        SELECT 'U_CLCONTACT', 'CONTACTO', 'CLI', d.u_clcontactstamp, RTRIM(d.u_clcontactstamp), 'D'
+        SELECT 'U_CLCONTACT', 'CONTACTO', 'CLI', d.u_clcontactstamp,
+               RTRIM(d.u_clcontactstamp)
+                 + ISNULL((SELECT TOP 1 '|' + LTRIM(RTRIM(CONVERT(varchar(20), c.no))) + '-' + LTRIM(RTRIM(CONVERT(varchar(10), c.estab)))
+                             FROM dbo.cl AS c WITH (NOLOCK) WHERE c.clstamp = d.clstamp), ''),
+               'D'
           FROM deleted AS d
          WHERE NOT EXISTS (SELECT 1 FROM inserted AS i WHERE i.u_clcontactstamp = d.u_clcontactstamp);
 
